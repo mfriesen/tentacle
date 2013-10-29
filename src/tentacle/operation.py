@@ -1,5 +1,17 @@
 import subprocess
 
+class OperationResult:
+    
+    stdoutdata = ''
+    stderrdata = ''
+    
+    def __init__(self, stdoutdata, stderrdata):
+        self.stdoutdata = stdoutdata.strip()
+        self.stderrdata = stderrdata.strip()
+    
+    def isSuccess(self):
+        return len(self.stderrdata) == 0
+    
 class Operation:
 
     def __init__(self):
@@ -11,9 +23,13 @@ class Operation:
     def service_stop_args(self, service_name):
         pass
     
-    def perform_operation(self, args):
+    def perform_subprocess(self, args):
         p = subprocess.Popen(args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         return p.communicate()
+        
+    def perform_operation(self, args):
+        stdoutdata, stderrdata = self.perform_subprocess(args)
+        return OperationResult(stdoutdata, stderrdata)
     
     def service_start(self, service_name):
         return self.perform_operation(self.service_start_args(service_name)) 
