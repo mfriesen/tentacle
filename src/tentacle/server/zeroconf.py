@@ -1,4 +1,5 @@
 import select
+import socket
 import pybonjour
 from tentacle.settings import DEFAULT_BONJOUR_REGTYPE
 from tentacle.spawn import Spawn
@@ -16,12 +17,13 @@ class Zeroconf(object):
         pass
 
     def spawn_add(self, fullname, hosttarget, port):
-        spawn = Spawn(fullname, hosttarget, port)
+        spawn = Spawn(fullname, hosttarget, port, socket.gethostbyname(hosttarget))
         self.spawns[fullname] = spawn
         print '----------- adding -------------------'
-        print '  fullname   =', fullname
-        print '  hosttarget =', hosttarget
-        print '  port       =', port
+        print '  fullname   =', spawn.fullname
+        print '  hosttarget =', spawn.hosttarget
+        print '  port       =', spawn.port
+        print '  ipaddress  =', spawn.ipaddress
         print ' list size '
         print len(self.spawns)
         

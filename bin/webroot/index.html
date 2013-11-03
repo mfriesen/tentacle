@@ -19,23 +19,31 @@
 
   <body>
     <div class="container">
-
+ 
       <div class="page-header">
-        <h1>Bootstrap grid examples</h1>
+        <h1>Tentacle - Cthulhu</h1>
         <p class="lead">Basic grid layouts to get you familiar with building within the Bootstrap grid system.</p>
       </div>
 
 	<table class="table table-bordered" id="filetable">
 		<thead>
 			<tr>
-				<th>Folder</th>
-				<th>Size</th>
-				<th>Connected devices and status</th>
-				<th style="width:170px">Sharing</th>
-			</tr>
+				<th>Host</th>
+				<th>Port</th>
+				<th>Service Name</th>
+				<th>Action</th>
+			</tr>			
 		</thead>
 		<tbody>
-		<tr><td>/fileshare/mirage</td><td>3.5 GB in 85154 files</td><td><table><tbody><tr><td style="padding-top: 12px; width: 20px;"><div class="local"></div></td><td>mirage</td><td><div>Synced on 10/28/13 22:27:25</div></td></tr></tbody></table></td><td><div style="margin: 0px;" class="btn-toolbar"><a class="btn showQRButton">Secret / QR</a><div style="text-align: center;"><a class="btn removeButton"><img src="../images/pref.png"></a><a class="btn removeButton"><img src="../images/cross.png"></a></div></div></td></tr><tr><td>/fileshare/media/tv/East.Bound.and.Down</td><td>6.4 GB in 26 files</td><td><table><tbody><tr><td style="padding-top: 12px; width: 20px;"><div class="local"></div></td><td>wolfrom-desktop</td><td><div>Synced on 10/28/13 18:06:15</div></td></tr></tbody></table></td><td><div style="margin: 0px;" class="btn-toolbar"><a class="btn showQRButton">Secret / QR</a><div style="text-align: center;"><a class="btn removeButton"><img src="../images/pref.png"></a><a class="btn removeButton"><img src="../images/cross.png"></a></div></div></td></tr></tbody>
+		% for key in spawns:
+			<tr>
+				<td>${spawns[key].hosttarget} (${spawns[key].ipaddress})</td>
+				<td>${spawns[key].port}</td>
+				<td>${spawns[key].fullname}</td>
+				<td>&nbsp;</td>
+			</tr>
+		% endfor
+		</tbody>
 		<tfoot>
 			<tr>
 				<td colspan="4">
@@ -44,12 +52,6 @@
 		</tfoot>
 	</table>
 		
-	<div class="row">
-		<div class="col-md-3">.col-md-3</div>
-        <div class="col-md-6">.col-md-6</div>
-        <div class="col-md-3">.col-md-3</div>
-	</div>
-
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
