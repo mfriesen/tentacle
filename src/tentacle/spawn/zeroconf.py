@@ -1,12 +1,6 @@
 import select
-import sys
 import pybonjour
-
-
-#name    = sys.argv[1]
-#regtype = sys.argv[2]
-#port    = int(sys.argv[3])
-
+from tentacle.settings import *
 
 def register_callback(sdRef, flags, errorCode, name, regtype, domain):
     if errorCode == pybonjour.kDNSServiceErr_NoError:
@@ -15,8 +9,7 @@ def register_callback(sdRef, flags, errorCode, name, regtype, domain):
         print '  regtype =', regtype
         print '  domain  =', domain
 
-
-def start(name, regtype, port):
+def startSpawn(name = DEFAULT_BONJOUR_NAME, regtype = DEFAULT_BONJOUR_REGTYPE, port = DEFAULT_BONJOUR_PORT):
     sdRef = pybonjour.DNSServiceRegister(name = name,
                                      regtype = regtype,
                                      port = port,
