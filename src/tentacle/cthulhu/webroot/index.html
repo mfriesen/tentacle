@@ -7,7 +7,7 @@
     <meta name="author" content="">
     <link rel="shortcut icon" href="ico/favicon.png">
 
-    <title>Grid Template for Bootstrap</title>
+    <title>Tentacle: The Spawn of Cthulhu</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -21,8 +21,8 @@
     <div class="container">
  
       <div class="page-header">
-        <h1>Tentacle - Cthulhu</h1>
-        <p class="lead">Basic grid layouts to get you familiar with building within the Bootstrap grid system.</p>
+        <h1>Tentacle</h1>
+        <p class="lead">The Spawn of Cthulhu</p>
       </div>
 
 	<table class="table table-bordered" id="filetable">
@@ -35,6 +35,9 @@
 			</tr>			
 		</thead>
 		<tbody>
+		% if len(spawns) == 0:
+			<tr><td colspan="4">No Spawn(s) found</td></tr>
+		% endif
 		% for key in spawns:
 			<tr>
 				<td>${spawns[key].hosttarget} (${spawns[key].ipaddress})</td>

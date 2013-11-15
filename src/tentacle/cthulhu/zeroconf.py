@@ -19,13 +19,13 @@ class Zeroconf(object):
     def spawn_add(self, fullname, hosttarget, port):
         spawn = Spawn(fullname, hosttarget, port, socket.gethostbyname(hosttarget))
         self.spawns[fullname] = spawn
-        print '----------- adding -------------------'
-        print '  fullname   =', spawn.fullname
-        print '  hosttarget =', spawn.hosttarget
-        print '  port       =', spawn.port
-        print '  ipaddress  =', spawn.ipaddress
-        print ' list size '
-        print len(self.spawns)
+#        print '----------- adding -------------------'
+#        print '  fullname   =', spawn.fullname
+#        print '  hosttarget =', spawn.hosttarget
+#        print '  port       =', spawn.port
+#        print '  ipaddress  =', spawn.ipaddress
+#        print ' list size '
+#        print len(self.spawns)
         
     def spawn_list(self):
         return self.spawns

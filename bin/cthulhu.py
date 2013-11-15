@@ -4,15 +4,15 @@ import os
 import cherrypy
 
 from cherrypy.process.plugins import Monitor
-from tentacle.server.cthulhu import Cthulhu
 from tentacle.server.zeroconf import *
+from tentacle.cthulhu import Root
 
 print '------------- CThulhu is alive'
 
 cherrypy.config.update("cherrypy.conf")
 
-cthulhu = Cthulhu()
-cherrypy.tree.mount(cthulhu, "/", "root.conf")
+cthulhu = Root()
+cherrypy.tree.mount(cthulhu, "/", "cthulhu.conf")
 
 Monitor(cherrypy.engine, querySpawns, frequency=5).subscribe()
 
