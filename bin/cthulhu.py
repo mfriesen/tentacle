@@ -4,7 +4,7 @@ import os
 import cherrypy
 
 from cherrypy.process.plugins import Monitor
-from tentacle.server.zeroconf import *
+from tentacle.cthulhu.zeroconf import *
 from tentacle.cthulhu import Root
 
 print '------------- CThulhu is alive'

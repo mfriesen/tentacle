@@ -5,7 +5,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 import cherrypy
 from cherrypy import tools
 
-from tentacle.server.zeroconf import Zeroconf
+from tentacle.cthulhu.zeroconf import Zeroconf
 from mako.lookup import TemplateLookup
 
 class Root:
