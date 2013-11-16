@@ -4,10 +4,8 @@ import os
 import cherrypy
 
 from cherrypy.process.plugins import Monitor
-from tentacle.cthulhu.zeroconf import *
+from tentacle.cthulhu.zeroconf import querySpawns
 from tentacle.cthulhu import Root
-
-print '------------- CThulhu is alive'
 
 cherrypy.config.update("cherrypy.conf")
 

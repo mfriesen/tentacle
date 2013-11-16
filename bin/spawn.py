@@ -2,7 +2,7 @@
 
 import argparse
 from tentacle.settings import *
-from tentacle.spawn.zeroconf import startSpawn
+from tentacle.spawn import startSpawn
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--name', help='the name of the spawn', default=DEFAULT_BONJOUR_NAME)

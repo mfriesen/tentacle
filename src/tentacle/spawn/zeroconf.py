@@ -9,7 +9,7 @@ def register_callback(sdRef, flags, errorCode, name, regtype, domain):
         print '  regtype =', regtype
         print '  domain  =', domain
 
-def startSpawn(name = DEFAULT_BONJOUR_NAME, regtype = DEFAULT_BONJOUR_REGTYPE, port = DEFAULT_BONJOUR_PORT):
+def startZeroConf(name = DEFAULT_BONJOUR_NAME, regtype = DEFAULT_BONJOUR_REGTYPE, port = DEFAULT_BONJOUR_PORT):
     sdRef = pybonjour.DNSServiceRegister(name = name,
                                      regtype = regtype,
                                      port = port,
@@ -21,6 +21,7 @@ def startSpawn(name = DEFAULT_BONJOUR_NAME, regtype = DEFAULT_BONJOUR_REGTYPE, p
                 ready = select.select([sdRef], [], [])
                 if sdRef in ready[0]:
                     pybonjour.DNSServiceProcessResult(sdRef)
+                    break
         except KeyboardInterrupt:
             pass
     finally:

@@ -43,7 +43,9 @@
 				<td>${spawns[key].hosttarget} (${spawns[key].ipaddress})</td>
 				<td>${spawns[key].port}</td>
 				<td>${spawns[key].fullname}</td>
-				<td>&nbsp;</td>
+				<td>
+					<button class="action-sent-msg btn-link" type="button">Send Msg</button>
+				</td>
 			</tr>
 		% endfor
 		</tbody>
@@ -58,5 +60,16 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery-2.0.3.min.js"></script>
+    <script>
+	$(".action-sent-msg").click(function() {
+		// alert( "Handler for .click() called." );
+		$.post("/action/sendmsg", function( data ) {
+			alert( "Handler for .click() called." );
+			// $( ".result" ).html( data );
+		});
+	});
+	</script>
+
   </body>
 </html>

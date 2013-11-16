@@ -1,14 +1,27 @@
 #!python
-import os.path
-current_dir = os.path.dirname(os.path.abspath(__file__))
 
+import os.path
 import cherrypy
 from cherrypy import tools
-
-from tentacle.cthulhu.zeroconf import Zeroconf
 from mako.lookup import TemplateLookup
 
+from tentacle.cthulhu.zeroconf import Zeroconf
+from tentacle.cthulhu.multicast import sendMessage
+
+print '------------- CThulhu is alive'
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+class Action:
+    
+    @cherrypy.expose
+    def sendmsg(self):
+        sendMessage('this is our awesome message')
+        
 class Root:
+    
+    action = Action()
+    
     @cherrypy.expose
     def index(self):
         spawns = Zeroconf.spawn_list()

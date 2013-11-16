@@ -1,3 +1,10 @@
+from tentacle.settings import *
+from tentacle.spawn.zeroconf import startZeroConf
+from tentacle.spawn.multicast import startSpawnMulticast
+
+def startSpawn(name = DEFAULT_BONJOUR_NAME, regtype = DEFAULT_BONJOUR_REGTYPE, port = DEFAULT_BONJOUR_PORT):
+    startZeroConf(name, regtype, port)
+    startSpawnMulticast()
 
 class Spawn(object):
     
