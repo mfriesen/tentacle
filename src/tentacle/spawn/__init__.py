@@ -1,21 +1,18 @@
+
 from tentacle.settings import *
-from tentacle.spawn.zeroconf import startZeroConf
-from tentacle.spawn.multicast import startSpawnMulticast
-
+from tentacle.spawn.discovery import MulticastDiscovery
+        
 def startSpawn(name = DEFAULT_BONJOUR_NAME, regtype = DEFAULT_BONJOUR_REGTYPE, port = DEFAULT_BONJOUR_PORT):
-    startZeroConf(name, regtype, port)
-    startSpawnMulticast()
 
-class Spawn(object):
+    discovery = MulticastDiscovery()
     
-    fullname = ""
-    hosttarget = ""
-    port = ""
-    ipaddress = ""
+    discovery.start()
     
-    def __init__(self, fullname, hosttarget, port, ipaddress):
-        self.ipaddress = ipaddress
-        self.fullname = fullname
-        self.hosttarget = hosttarget
-        self.port = port
-    
+    try:
+        try:
+            while True:
+                discovery.listen_for_message()
+        except KeyboardInterrupt:
+            pass
+    finally:
+        discovery.stop()

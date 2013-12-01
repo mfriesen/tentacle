@@ -4,7 +4,7 @@ import os
 import cherrypy
 
 from cherrypy.process.plugins import Monitor
-from tentacle.cthulhu.zeroconf import querySpawns
+from tentacle.cthulhu.operation import querySpawns
 from tentacle.cthulhu import Root
 
 cherrypy.config.update("cherrypy.conf")

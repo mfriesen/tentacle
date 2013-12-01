@@ -21,7 +21,7 @@ def startZeroConf(name = DEFAULT_BONJOUR_NAME, regtype = DEFAULT_BONJOUR_REGTYPE
                 ready = select.select([sdRef], [], [])
                 if sdRef in ready[0]:
                     pybonjour.DNSServiceProcessResult(sdRef)
-                    break
+#                    break
         except KeyboardInterrupt:
             pass
     finally:
