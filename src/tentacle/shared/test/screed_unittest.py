@@ -1,38 +1,63 @@
 import unittest
-from tentacle.shared import to_json
-from tentacle.shared import Screed
+from tentacle.shared.screed import Screed
 
 class TestScreed(unittest.TestCase):
     
-    screed = ""
-    
     def setUp(self):
-        self.screed = Screed()
-        self.assertTrue(len(self.screed.spawn_id) == 36)
-        self.screed.spawn_id = 'a2ddb78a-eefb-4598-a7e1-a97c8f37a56d'
+        pass
     
     def test_screed_hello(self):
-        # given        
-        self.screed.add_cmd("hello")
+        # given
+        screed = Screed()
+        screed.add_cmd("hello")
         
         # when
-        json = to_json(self.screed)
+        json = screed.to_json()
 
         # then
-        self.assertEqual('{\n"cmds": [\n{\n"cmd": "hello"\n}\n], \n"spawn_id": "a2ddb78a-eefb-4598-a7e1-a97c8f37a56d"\n}', json)
+        self.assertEqual('{\n"screed": {\n"cmds": [\n{\n"cmd": "hello"\n}\n]\n}\n}', json)
     
     def test_screed_hello_response(self):
-        # given        
-        screed0 = self.screed.add_cmd("hello")
-        screed0.status_success()
-        result0 = screed0.add_result()
-        result0.os = "linux"
+        # given
+        screed = Screed()
+        screed.add_cmd("hello")
+        screed.add_result(index = 0, text = "this is resulting text")        
         
         # when
-        json = to_json(self.screed)
+        json = screed.to_json()
         
         # then
-        expect = '{\n"cmds": [\n{\n"cmd": "hello", \n"result": {\n"os": "linux"\n}, \n"status": "success"\n}\n], \n"spawn_id": "a2ddb78a-eefb-4598-a7e1-a97c8f37a56d"\n}'
+        expect = '{\n"screed": {\n"cmds": [\n{\n"cmd": "hello", \n"result": {\n"text": "this is resulting text"\n}\n}\n]\n}\n}'
+        self.assertEqual(expect, json)
+        
+    def test_screed_load(self):
+        # given
+        screed = Screed()
+        index = screed.add_cmd("hello")
+        self.assertEqual(0, index)
+        screed.add_result(index, "this is resulting text")        
+        json = screed.to_json()
+        
+        # when
+        screed2 = Screed()
+        screed2.load(json)
+        
+        # then
+        self.assertEqual(1, len(screed2.cmds()))
+        self.assertEqual("hello", screed2.cmd(0))
+        self.assertEqual("this is resulting text", screed2.result(0)['text'])
+    
+    def test_screed_status_success(self):
+        # given
+        screed = Screed()
+        screed.add_cmd("hello")
+        screed.status_success()            
+        
+        # when
+        json = screed.to_json()
+        
+        # then
+        expect = '{\n"screed": {\n"cmds": [\n{\n"cmd": "hello"\n}\n]\n}, \n"status": "success"\n}'
         self.assertEqual(expect, json)
         
 if __name__ == '__main__':

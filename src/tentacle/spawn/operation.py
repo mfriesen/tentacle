@@ -1,18 +1,16 @@
-import json
-from tentacle.shared import Screed
+from tentacle.shared.screed import Screed
 
-def process_operation(action_json):
-    resp = 'ack'
-    data = json.loads(action_json)
-    action = data['action']
+def process_operation(json_data):
     
-    if (action == 'hello'):
-        print 'sending hello response'
-        action = Screed("hello")
-        resp = action.to_JSON()
-        print '---------'
-        print resp
-        print type(resp)
-        print '---------'
+    screed = Screed()
+    screed.load(json_data)
+    
+    for index in range(len(screed.cmds())):
+        cmd = screed.cmd(index)
         
-    return resp
+        if cmd == 'hello':
+            screed.add_result(index, text = "everything is good...")
+            screed.status_success(index)
+    
+    screed.status_success()
+    return screed.to_json()

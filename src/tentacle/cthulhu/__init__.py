@@ -5,8 +5,7 @@ import cherrypy
 from cherrypy import tools
 from mako.lookup import TemplateLookup
 
-from tentacle.cthulhu.model import CthulhuData
-from tentacle.cthulhu.discovery import MulticastDiscovery
+from tentacle.cthulhu.operation import *
 
 print '------------- CThulhu is alive'
 

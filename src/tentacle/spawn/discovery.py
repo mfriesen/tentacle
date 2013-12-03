@@ -47,7 +47,7 @@ class MulticastDiscovery(Discovery):
     
         ack = process_operation(data)
         #ack = action_response(data)
-        print ack
+        #print ack
 
         self.sock.sendto(ack, address)
 

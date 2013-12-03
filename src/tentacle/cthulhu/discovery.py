@@ -2,13 +2,11 @@ import socket
 import struct
 import sys
 
-from tentacle.shared import to_json
 from tentacle.shared.discovery import Discovery
 
 class MulticastDiscovery(Discovery):
     
     sock = None
-    sdRef = None
     multicast_group = None
     
     def start(self):
@@ -28,9 +26,9 @@ class MulticastDiscovery(Discovery):
 
     def send_message(self, screed):
         # Send data to the multicast group
-        message = to_json(screed)
+        message = screed.to_json()
         print >>sys.stderr, 'sending "%s"' % message
-        sent = self.sock.sendto(message, self.multicast_group)
+        self.sock.sendto(message, self.multicast_group)
 
         # Look for responses from all recipients
         while True:
