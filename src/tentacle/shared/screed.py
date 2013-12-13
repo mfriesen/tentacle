@@ -1,6 +1,6 @@
 import json
 
-class Screed(object):
+class Screed(dict):
     
     STATUS_SUCCESS = "success"
     STATUS_FAIL = "fail"
@@ -11,71 +11,51 @@ class Screed(object):
     
     def __init__(self):
         self.screed = dict()
+        self.update({"screed" : list()})
+
+    def __step_name__(self, step):
+        return 'step%03d' % step
     
     '''
-    Add command to screed
-    Returns index of command added
+    Add function to a step
     '''
-    def add_cmd(self, cmd):
-        if 'cmds' not in self.screed:
-            self.screed['cmds'] = list()
+    def add_fn(self, step, fn_name, fn):
+        screed = self.get("screed")
         
-        comp = dict({'cmd': cmd})
-        self.screed['cmds'].append(comp)
-        return len(self.screed['cmds']) - 1
-
-    '''
-    Add result to command
-    Requires index > -1
-    '''
-    def add_result(self, index = -1, text = ''):
-        if index > -1:
-            dic = dict({'text': text})            
-            self.cmds()[index]['result'] = dic 
-
-    '''
-    Add status to command
-    Requires index > -1
-    '''
-    def add_status(self, index = -1, status = None):
-        if index > -1: 
-            self.cmds()[index]['status'] = status 
+        if (step == len(screed)):
+            screed.insert(step, dict({self.__step_name__(step) : dict()}))
+        elif (step >= len(screed)):
+            for i in range(len(screed), step + 1):
+                screed.insert(i, dict({self.__step_name__(i) : dict()}))
             
+        self.get("screed")[step][self.__step_name__(step)].update({fn_name : fn})
+
     '''
-    Returns commands on screed
+    Return steps in screed
     '''
-    def cmds(self):
-        if 'cmds' in self.screed:
-            return self.screed['cmds']
-        return list()  
+    def steps(self):
+        return self.get("screed")
     
-    def cmd(self, index = -1):
-        if index > -1:
-            return self.cmds()[index]['cmd']
-        return ''
-    #def dict(self):
-    #    return self.screed
+    '''
+    Add status to step
+    Requires step > -1
+    '''
+    def add_status(self, step = -1, status = None):
+        if step > -1: 
+            self.get("screed")[step][self.__step_name__(step)].update({"status" : status})
     
     '''
     loads screed from JSON data
     '''
     def load(self, json_data):
-        self.screed = json.loads(json_data)['screed']
-    
-    '''
-    Returns the result from the command at index
-    '''
-    def result(self, index = -1):
-        if index > -1:
-            return self.cmds()[index]['result']
-        return ''
+        self.update(json.loads(json_data))
     
     '''
     Sets the status SUCCESS
     '''
     def status_success(self, index=None):
         if index is None:
-            self.status = self.STATUS_SUCCESS
+            self.status = self.update({"status" : self.STATUS_SUCCESS})
         else:
             self.add_status(index, self.STATUS_SUCCESS)
 

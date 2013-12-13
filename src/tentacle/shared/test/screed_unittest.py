@@ -5,37 +5,11 @@ class TestScreed(unittest.TestCase):
     
     def setUp(self):
         pass
-    
-    def test_screed_hello(self):
-        # given
-        screed = Screed()
-        screed.add_cmd("hello")
-        
-        # when
-        json = screed.to_json()
-
-        # then
-        self.assertEqual('{\n"screed": {\n"cmds": [\n{\n"cmd": "hello"\n}\n]\n}\n}', json)
-    
-    def test_screed_hello_response(self):
-        # given
-        screed = Screed()
-        screed.add_cmd("hello")
-        screed.add_result(index = 0, text = "this is resulting text")        
-        
-        # when
-        json = screed.to_json()
-        
-        # then
-        expect = '{\n"screed": {\n"cmds": [\n{\n"cmd": "hello", \n"result": {\n"text": "this is resulting text"\n}\n}\n]\n}\n}'
-        self.assertEqual(expect, json)
         
     def test_screed_load(self):
         # given
         screed = Screed()
-        index = screed.add_cmd("hello")
-        self.assertEqual(0, index)
-        screed.add_result(index, "this is resulting text")        
+        screed.add_fn(0, "hostname", "import socket\nprint socket.gethostname()")
         json = screed.to_json()
         
         # when
@@ -43,22 +17,82 @@ class TestScreed(unittest.TestCase):
         screed2.load(json)
         
         # then
-        self.assertEqual(1, len(screed2.cmds()))
-        self.assertEqual("hello", screed2.cmd(0))
-        self.assertEqual("this is resulting text", screed2.result(0)['text'])
+        self.assertEqual(1, len(screed2.get("screed")))
+        
+        expect = '{\n"screed": [\n{\n"step000": {\n"hostname": "import socket\\nprint socket.gethostname()"\n}\n}\n]\n}'
+        self.assertEqual(expect, screed2.to_json())
     
     def test_screed_status_success(self):
         # given
         screed = Screed()
-        screed.add_cmd("hello")
+        screed.add_fn(0, "hostname", "import socket\nprint socket.gethostname()")
+        screed.status_success(0)
         screed.status_success()            
         
         # when
         json = screed.to_json()
         
         # then
-        expect = '{\n"screed": {\n"cmds": [\n{\n"cmd": "hello"\n}\n]\n}, \n"status": "success"\n}'
+        expect = '{\n"screed": [\n{\n"step000": {\n"hostname": "import socket\\nprint socket.gethostname()", \n"status": "success"\n}\n}\n], \n"status": "success"\n}'
         self.assertEqual(expect, json)
+    
+    def test_screed_add_fn_step0(self):
+        # given
+        screed = Screed()
+        screed.add_fn(0, "hostname", "import socket\nsocket.gethostname()")
+        
+        # when
+        json = screed.to_json()
+        
+        # then
+        expect = '{\n"screed": [\n{\n"step000": {\n"hostname": "import socket\\nsocket.gethostname()"\n}\n}\n]\n}'
+        self.assertEqual(expect, json)  
+    
+    def test_screed_add_fn_step0_2(self):
+        # given
+        screed = Screed()
+        screed.add_fn(0, "hostname", "import socket\nprint socket.gethostname()")
+        screed.add_fn(0, "os", "import os\nprint os.name")
+        
+        # when
+        json = screed.to_json()
+        
+        # then
+        expect = '{\n"screed": [\n{\n"step000": {\n"hostname": "import socket\\nprint socket.gethostname()", \n"os": "import os\\nprint os.name"\n}\n}\n]\n}'
+        self.assertEqual(expect, json)  
+    
+    def test_screed_add_fn_steps(self):
+        # given
+        screed = Screed()
+        screed.add_fn(0, "hostname", "import socket\nsocket.gethostname()")
+        screed.add_fn(5, "os", "import os\nprint os.name")
+        
+        # when
+        json = screed.to_json()
+        
+        # then
+        expect = '{\n"screed": [\n{\n"step000": {\n"hostname": "import socket\\nsocket.gethostname()"\n}\n}, \n{\n"step001": {}\n}, \n{\n"step002": {}\n}, \n{\n"step003": {}\n}, \n{\n"step004": {}\n}, \n{\n"step005": {\n"os": "import os\\nprint os.name"\n}\n}\n]\n}'
+        self.assertEqual(expect, json)  
+    
+    def test_screed_steps(self):
+        # given
+        screed = Screed()
+        screed.add_fn(0, "hostname", "import socket\nprint socket.gethostname()")
+        json = screed.to_json()
+        
+        # when
+        screed2 = Screed()
+        screed2.load(json)
+        
+        # then
+        steps = screed2.steps()
+        self.assertEqual(1, len(steps))
+        
+        for s in steps:
+            for key in s:
+                print key, 'corresponds to', s[key], ' ', type(s[key])
+        #expect = '{\n"screed": [\n{\n"step000": {\n"hostname": "import socket\\nprint socket.gethostname()"\n}\n}\n]\n}'
+        #self.assertEqual(expect, screed2.to_json())
         
 if __name__ == '__main__':
     unittest.main()
