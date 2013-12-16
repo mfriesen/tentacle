@@ -25,7 +25,7 @@ def querySpawns():
     print 'querying for spawns....'
     
     screed = Screed()
-    screed.add_fn(0, "hostname", "import socket\nsocket.gethostname()")
+    screed.add_fn(0, "hostname", "import socket\nprint socket.gethostname()")
     response = CthulhuData.send_message(screed)
     print '------------ response start --------------------------'
     print response

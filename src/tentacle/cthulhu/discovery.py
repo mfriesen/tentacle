@@ -10,6 +10,7 @@ class MulticastDiscovery(Discovery):
     multicast_group = None
     
     def start(self):
+        print 'starting 1....'
         self.multicast_group = ('224.3.29.71', 10000)
 
         # Create the datagram socket

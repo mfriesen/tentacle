@@ -4,6 +4,7 @@ import sys
 
 def startSpawnMulticast():
     multicast_group = '224.3.29.71'
+    print 'starting 3....'
     server_address = ('', 10000)
 
     # Create the socket

@@ -12,9 +12,6 @@ class Screed(dict):
     def __init__(self):
         self.screed = dict()
         self.update({"screed" : list()})
-
-    def __step_name__(self, step):
-        return 'step%03d' % step
     
     '''
     Add function to a step
@@ -23,12 +20,12 @@ class Screed(dict):
         screed = self.get("screed")
         
         if (step == len(screed)):
-            screed.insert(step, dict({self.__step_name__(step) : dict()}))
+            screed.insert(step, dict())
         elif (step >= len(screed)):
             for i in range(len(screed), step + 1):
-                screed.insert(i, dict({self.__step_name__(i) : dict()}))
+                screed.insert(i, dict())
             
-        self.get("screed")[step][self.__step_name__(step)].update({fn_name : fn})
+        self.get("screed")[step].update({fn_name : fn})
 
     '''
     Return steps in screed
@@ -42,7 +39,7 @@ class Screed(dict):
     '''
     def add_status(self, step = -1, status = None):
         if step > -1: 
-            self.get("screed")[step][self.__step_name__(step)].update({"status" : status})
+            self.get("screed")[step].update({"status" : status})
     
     '''
     loads screed from JSON data
