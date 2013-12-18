@@ -19,25 +19,11 @@ class CthulhuData(MulticastDiscovery):
         self._spawns[spawn_id] = screed
         
     def spawn_list(self):
-        return self._spawns.values()
+        return self._spawns
         
 def querySpawns():
     print 'querying for spawns....'
     
     screed = Screed()
     screed.add_fn(0, "hostname", "import socket\nprint socket.gethostname()")
-    response = CthulhuData.send_message(screed)
-    print '------------ response start --------------------------'
-    print response
-    #print response.status
-    #print response.message
-    print '------------ response end --------------------------'
-    #Zeroconf.querySpawns()
-    
-def sendTestMessage():
-    response = CthulhuData.send_message(Screed('this is our awesome message'))
-    print '------------ response start --------------------------'
-    print response.server
-    print response.status
-    print response.message
-    print '------------ response end --------------------------'
+    CthulhuData._spawns = CthulhuData.send_message(screed)

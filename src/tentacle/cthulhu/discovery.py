@@ -4,6 +4,15 @@ import sys
 
 from tentacle.shared.discovery import Discovery
 
+class ScreedResponse(object):
+    
+    screed = None
+    server = None
+    
+    def __init__(self, screed, server):
+        self.screed = screed
+        self.server = server
+        
 class MulticastDiscovery(Discovery):
     
     sock = None
@@ -30,6 +39,8 @@ class MulticastDiscovery(Discovery):
         message = screed.to_json()
         print >>sys.stderr, 'sending "%s"' % message
         self.sock.sendto(message, self.multicast_group)
+        
+        responses = list()
 
         # Look for responses from all recipients
         while True:
@@ -38,14 +49,12 @@ class MulticastDiscovery(Discovery):
                 data, server = self.sock.recvfrom(65565)
             except socket.timeout:
                 print >>sys.stderr, 'timed out, no more responses'
-                #resp.status = resp.STATUS_TIMEOUT
                 break
             else:
-                #resp.message = data
-                #resp.server = server
-                #resp.status = resp.STATUS_SUCCESS
-                print >>sys.stderr, 'received "%s" from %s' % (data, server)
+                responses.append(ScreedResponse(screed, server))
+                print >>sys.stderr, 'received!!! "%s" from %s' % (data, server)
 
+        return responses
         
     def stop(self):
         print >>sys.stderr, 'closing socket'
