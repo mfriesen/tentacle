@@ -1,5 +1,8 @@
 class Discovery(object):
     
+    def type(self):
+        pass
+    
     def start(self):
         pass
     

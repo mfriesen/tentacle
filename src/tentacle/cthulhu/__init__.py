@@ -5,7 +5,7 @@ import cherrypy
 from cherrypy import tools
 from mako.lookup import TemplateLookup
 
-from tentacle.cthulhu.operation import *
+from tentacle.cthulhu.operation import CthulhuData
 
 print '------------- CThulhu is alive'
 
@@ -14,8 +14,8 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 class Action:
     
     @cherrypy.expose
-    def sendmsg(self):        
-        sendTestMessage()
+    def sendmsg(self):
+        pass  
         
 class Root:
     

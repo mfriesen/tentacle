@@ -73,7 +73,7 @@ class TestScreed(unittest.TestCase):
         # then
         expect = '{\n"screed": [\n{\n"hostname": "import socket\\nsocket.gethostname()"\n}, \n{}, \n{}, \n{}, \n{}, \n{\n"os": "import os\\nprint os.name"\n}\n]\n}'
         self.assertEqual(expect, json)  
-    
+        
     def test_screed_steps(self):
         # given
         screed = Screed()
@@ -93,6 +93,17 @@ class TestScreed(unittest.TestCase):
                 expect = u'import socket\nprint socket.gethostname()'
                 self.assertEqual('hostname', key)
                 self.assertEqual(expect, s[key])
+        
+    def test_screed_step_0(self):
+        # given
+        screed = Screed()
+        screed.add_fn(0, "hostname", "import socket\nsocket.gethostname()")
+        
+        # when
+        result = screed.step(0)
+        
+        # then
+        self.assertEqual("import socket\nsocket.gethostname()", result["hostname"])
         
 if __name__ == '__main__':
     unittest.main()

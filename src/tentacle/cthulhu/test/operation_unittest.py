@@ -21,12 +21,17 @@ class TestOperation(unittest.TestCase):
         querySpawns()
 
         # then
-        result = CthulhuData.spawn_list()
-        self.assertEqual(1, len(result))
+        results = CthulhuData.spawns()
+        self.assertEqual(1, len(results))
         
-        CthulhuData.stop()
+        screed = results[0]
+        self.assertEqual(1, len(screed.steps()))
+        
+        step_dic = screed.step(0)
+        self.assertTrue(len(step_dic['hostname']) > 0)
+                
+        CthulhuData.cleanup()
         spawn.join()
-        
             
 if __name__ == '__main__':
     unittest.main()

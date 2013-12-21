@@ -5,25 +5,40 @@ def singleton(cls):
     return cls()
 
 @singleton
-class CthulhuData(MulticastDiscovery):
+class CthulhuData(object):
     
     _spawns = None
     _discovery = None
 
     def __init__(self):
-        self._spawns = dict()
-        self.start()
-
-    def spawn_add(self, screed):
-        spawn_id = screed.spawn_id
-        self._spawns[spawn_id] = screed
+        self._spawns = list()
+        self._discovery = [MulticastDiscovery()]
         
-    def spawn_list(self):
+        for discovery in self._discovery:
+            discovery.start()
+        
+    def send_screed(self, screed):
+        
+        results = list()
+        for discovery in self._discovery:            
+            messages = discovery.send_message(screed)
+            for message in messages:
+                screed_result = Screed()
+                screed_result.load(message)
+                results.append(screed_result)
+            
+        return results;
+            
+    def spawns(self):
         return self._spawns
-        
+    
+    def cleanup(self):
+        for discovery in self._discovery:
+            discovery.stop()
+
 def querySpawns():
     print 'querying for spawns....'
     
     screed = Screed()
     screed.add_fn(0, "hostname", "import socket\nprint socket.gethostname()")
-    CthulhuData._spawns = CthulhuData.send_message(screed)
+    CthulhuData._spawns = CthulhuData.send_screed(screed)

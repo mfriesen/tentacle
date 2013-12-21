@@ -3,20 +3,14 @@ import struct
 import sys
 
 from tentacle.shared.discovery import Discovery
-
-class ScreedResponse(object):
-    
-    screed = None
-    server = None
-    
-    def __init__(self, screed, server):
-        self.screed = screed
-        self.server = server
         
 class MulticastDiscovery(Discovery):
     
     sock = None
     multicast_group = None
+    
+    def type(self):
+        return "multicast"
     
     def start(self):
         print 'starting 1....'
@@ -51,7 +45,7 @@ class MulticastDiscovery(Discovery):
                 print >>sys.stderr, 'timed out, no more responses'
                 break
             else:
-                responses.append(ScreedResponse(screed, server))
+                responses.append(data)
                 print >>sys.stderr, 'received!!! "%s" from %s' % (data, server)
 
         return responses

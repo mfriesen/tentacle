@@ -17,16 +17,23 @@ class Screed(dict):
     Add function to a step
     '''
     def add_fn(self, step, fn_name, fn):
-        screed = self.get("screed")
         
-        if (step == len(screed)):
-            screed.insert(step, dict())
-        elif (step >= len(screed)):
-            for i in range(len(screed), step + 1):
-                screed.insert(i, dict())
+        steps = self.steps()
+        
+        if (step == len(steps)):
+            steps.insert(step, dict())
+        elif (step >= len(steps)):
+            for i in range(len(steps), step + 1):
+                steps.insert(i, dict())
             
-        self.get("screed")[step].update({fn_name : fn})
-
+        self.step(step).update({fn_name : fn})
+    
+    '''
+    Gets the functions in a step
+    '''
+    def step(self, step):
+        return self.steps()[step] 
+    
     '''
     Return steps in screed
     '''
