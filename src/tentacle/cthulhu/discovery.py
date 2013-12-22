@@ -13,7 +13,7 @@ class MulticastDiscovery(Discovery):
         return "multicast"
     
     def start(self):
-        print 'starting 1....'
+        
         self.multicast_group = ('224.3.29.71', 10000)
 
         # Create the datagram socket
@@ -31,25 +31,25 @@ class MulticastDiscovery(Discovery):
     def send_message(self, screed):
         # Send data to the multicast group
         message = screed.to_json()
-        print >>sys.stderr, 'sending "%s"' % message
+        #print >>sys.stderr, 'sending "%s"' % message
         self.sock.sendto(message, self.multicast_group)
         
         responses = list()
 
         # Look for responses from all recipients
         while True:
-            print >>sys.stderr, 'waiting to receive'
+            #print >>sys.stderr, 'waiting to receive'
             try:
                 data, server = self.sock.recvfrom(65565)
             except socket.timeout:
-                print >>sys.stderr, 'timed out, no more responses'
+                #print >>sys.stderr, 'timed out, no more responses'
                 break
             else:
                 responses.append(data)
-                print >>sys.stderr, 'received!!! "%s" from %s' % (data, server)
+                #print >>sys.stderr, 'received!!! "%s" from %s' % (data, server)
 
         return responses
         
     def stop(self):
-        print >>sys.stderr, 'closing socket'
+        #print >>sys.stderr, 'closing socket'
         self.sock.close()

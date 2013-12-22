@@ -22,9 +22,7 @@ class Root:
     @cherrypy.expose
     def index(self):
         
-        spawns = CthulhuData.spawn_list()
-        print '# of spawns'
-        print len(spawns)
+        spawns = CthulhuData.spawns()
 
         mylookup = TemplateLookup(directories=[current_dir + '/webroot'])
         mytemplate = mylookup.get_template('index.html')
