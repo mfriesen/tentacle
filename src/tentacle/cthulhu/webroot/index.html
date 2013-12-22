@@ -38,11 +38,10 @@
 		% if len(spawns) == 0:
 			<tr><td colspan="4">No Spawn(s) found</td></tr>
 		% endif
-		% for key in spawns:
+		% for spawn in spawns:
 			<tr>
-				<td>${spawns[key].hosttarget} (${spawns[key].ipaddress})</td>
-				<td>${spawns[key].port}</td>
-				<td>${spawns[key].fullname}</td>
+				<td>${spawn.steps()[0]['hostname']}</td>
+				<td>${spawn.steps()[0]}</td>
 				<td>
 					<button class="action-sent-msg btn-link" type="button">Send Msg</button>
 				</td>

@@ -41,4 +41,6 @@ def querySpawns():
     
     screed = Screed()
     screed.add_fn(0, "hostname", "import socket\nprint socket.gethostname()")
+    screed.add_fn(0, "ipaddress", "import socket\nprint socket.gethostbyname(socket.gethostname())")
+    
     CthulhuData._spawns = CthulhuData.send_screed(screed)

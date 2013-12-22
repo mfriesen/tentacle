@@ -1,26 +1,26 @@
-import sys
 import StringIO
-import contextlib
+import sys
 
 from tentacle.shared.screed import Screed
-
-@contextlib.contextmanager
-def stdoutIO(stdout=None):
-    old = sys.stdout
-    if stdout is None:
-        stdout = StringIO.StringIO()
-    sys.stdout = stdout
-    yield stdout
-    sys.stdout = old
 
 '''
 Runs the funcrion and returns the output as text
 '''
 def run_fn(snippet):
+    backup = sys.stdout
+   
+    try:
+        sys.stdout = StringIO.StringIO()
+        exec snippet
     
-    with stdoutIO() as s:
-        exec snippet    
-    return s.getvalue()
+        out = sys.stdout.getvalue()
+        sys.stdout.close()
+    except Exception as e:
+        out = str(e)
+    finally:
+        sys.stdout = backup
+    
+    return out
         
 '''
 Processes all the steps of the screed
