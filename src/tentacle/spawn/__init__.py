@@ -6,20 +6,23 @@ from tentacle.spawn.discovery import MulticastDiscovery
 
 class SpawnThread(threading.Thread):
     
+    discovery = None
+    
     def __init__(self):
         super(SpawnThread, self).__init__()
         self.stoprequest = threading.Event()
 
     def run(self):
 
-        discovery = MulticastDiscovery()
-        discovery.start()
+        self.discovery = MulticastDiscovery()
+        self.discovery.start()
 
         while not self.stoprequest.isSet():
-            discovery.listen_for_message()
+            self.discovery.listen_for_message()
 
     def join(self, timeout=None):
         self.stoprequest.set()
+        self.discovery.stop()
         super(SpawnThread, self).join(timeout)
         
 def startSpawn(name = DEFAULT_BONJOUR_NAME, regtype = DEFAULT_BONJOUR_REGTYPE, port = DEFAULT_BONJOUR_PORT):
