@@ -1,9 +1,20 @@
 import socket
 import struct
-import sys
 
-from tentacle.shared.discovery import Discovery
-        
+class Discovery(object):
+    
+    def type(self):
+        pass
+    
+    def start(self):
+        pass
+    
+    def send_message(self, screed):
+        pass
+    
+    def stop(self):
+        pass
+
 class MulticastDiscovery(Discovery):
     
     sock = None
@@ -34,7 +45,8 @@ class MulticastDiscovery(Discovery):
         #print >>sys.stderr, 'sending "%s"' % message
         self.sock.sendto(message, self.multicast_group)
         
-        responses = list()
+        datas = list()
+        servers = list()
 
         # Look for responses from all recipients
         while True:
@@ -45,10 +57,11 @@ class MulticastDiscovery(Discovery):
                 #print >>sys.stderr, 'timed out, no more responses'
                 break
             else:
-                responses.append(data)
+                datas.append(data)
+                servers.append(server)
                 #print >>sys.stderr, 'received!!! "%s" from %s' % (data, server)
 
-        return responses
+        return datas, servers
         
     def stop(self):
         #print >>sys.stderr, 'closing socket'

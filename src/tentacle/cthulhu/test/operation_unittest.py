@@ -36,6 +36,10 @@ class TestOperation(unittest.TestCase):
         screed = results[0]
         self.assertEqual(1, len(screed.steps()))
         
+        self.assertTrue(len(screed['spawn']['id']) > 0)
+        self.assertTrue(len(screed['spawn']['ipaddress']) > 0)
+        self.assertEquals(10000, screed['spawn']['port'])
+        
         step_dic = screed.step(0)
         self.assertTrue(len(step_dic['hostname']) > 0)
                 

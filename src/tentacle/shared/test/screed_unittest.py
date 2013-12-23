@@ -105,5 +105,17 @@ class TestScreed(unittest.TestCase):
         # then
         self.assertEqual("import socket\nsocket.gethostname()", result["hostname"])
         
+    def test_add_0(self):
+        # given
+        screed = Screed()
+        screed.add("spawn", {'id': 4098})
+        screed.add("spawn", {'sape': 4139})
+
+        # when
+        result = screed.to_json()
+                 
+        # then
+        self.assertEqual('{\n"screed": [], \n"spawn": {\n"id": 4098, \n"sape": 4139\n}\n}', result)
+        
 if __name__ == '__main__':
     unittest.main()

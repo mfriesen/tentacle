@@ -3,8 +3,17 @@ import struct
 
 from tentacle.spawn.operation import run_screed
 
-from tentacle.shared.discovery import Discovery
-            
+class Discovery(object):
+        
+    def start(self):
+        pass
+    
+    def listen_for_message(self, spawnConfig):
+        pass
+        
+    def stop(self):
+        pass
+
 class MulticastDiscovery(Discovery):
     
     sock = ""
@@ -29,12 +38,12 @@ class MulticastDiscovery(Discovery):
         mreq = struct.pack('4sL', group, socket.INADDR_ANY)
         self.sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
             
-    def listen_for_message(self):
+    def listen_for_message(self, spawnConfig):
                     
         try:
             data, address = self.sock.recvfrom(1024)
     
-            ack = run_screed(data)
+            ack = run_screed(spawnConfig, data)
 
             self.sock.sendto(ack, address)
 

@@ -21,10 +21,14 @@ class CthulhuData(object):
         
         results = list()
         for discovery in self._discovery:            
-            messages = discovery.send_message(screed)
-            for message in messages:
+            datas, servers = discovery.send_message(screed)
+            
+            for idx, data in enumerate(datas):
+                server = servers[idx]
                 screed_result = Screed()
-                screed_result.load(message)
+                screed_result.load(data)
+                screed_result.add("spawn", {"ipaddress" : server[0], "port" : server[1]})
+                
                 results.append(screed_result)
             
         return results;
@@ -41,6 +45,5 @@ def querySpawns():
     
     screed = Screed()
     screed.add_fn(0, "hostname", "import socket\nprint socket.gethostname()")
-    screed.add_fn(0, "ipaddress", "import socket\nprint socket.gethostbyname(socket.gethostname())")
     
     CthulhuData._spawns = CthulhuData.send_screed(screed)

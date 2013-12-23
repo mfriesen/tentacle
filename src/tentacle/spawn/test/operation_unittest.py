@@ -1,5 +1,6 @@
 import unittest
 
+from tentacle.spawn import SpawnConfig
 from tentacle.spawn.operation import run_fn
 from tentacle.spawn.operation import run_screed
 from tentacle.shared.screed import Screed
@@ -24,12 +25,14 @@ class TestOperation(unittest.TestCase):
         fn = "for v in ['cat', 'window', 'defenestrate']:\n\tprint v\n"
         screed = Screed()
         screed.add_fn(0, "loop", fn)
+        spawnConfig = SpawnConfig()
+        spawnConfig._spawn_id = '9dcc9258-3998-4012-b3cf-0b7bd70e0a4d'
         
         # when
-        result = run_screed(screed.to_json())
+        result = run_screed(spawnConfig, screed.to_json())
         
         # then
-        self.assertEqual('{\n"screed": [\n{\n"loop": "cat\\nwindow\\ndefenestrate\\n"\n}\n]\n}', result)
+        self.assertEqual('{\n"screed": [\n{\n"loop": "cat\\nwindow\\ndefenestrate\\n"\n}\n], \n"spawn": {\n"id": "9dcc9258-3998-4012-b3cf-0b7bd70e0a4d"\n}\n}', result)
     
 if __name__ == '__main__':
     unittest.main()

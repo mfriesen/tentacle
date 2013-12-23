@@ -14,6 +14,15 @@ class Screed(dict):
         self.update({"screed" : list()})
     
     '''
+    Add key and value to screed
+    '''
+    def add(self, key, value):
+        if key in self and type(value) is dict:
+            self[key].update(value)
+        else:
+            self.update({key : value})
+        
+    '''
     Add function to a step
     '''
     def add_fn(self, step, fn_name, fn):

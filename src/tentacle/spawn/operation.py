@@ -25,7 +25,7 @@ def run_fn(snippet):
 '''
 Processes all the steps of the screed
 '''
-def run_screed(screed_json):
+def run_screed(spawnConfig, screed_json):
     
     screed = Screed()
     screed.load(screed_json)
@@ -34,5 +34,7 @@ def run_screed(screed_json):
         for key in step:
             text = run_fn(step[key])
             screed.add_fn(idx, key, text)
+    
+    screed.add("spawn", {'id': spawnConfig.spawn_id()})
     
     return screed.to_json()
