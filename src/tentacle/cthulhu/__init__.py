@@ -1,5 +1,6 @@
 #!python
 
+import json
 import os.path
 import cherrypy
 from cherrypy import tools
@@ -12,11 +13,14 @@ print '------------- CThulhu is alive'
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 class Action:
-    
+
     @cherrypy.expose
-    def sendmsg(self):
-        pass  
-        
+    def spawns(self):
+        response = cherrypy.response
+        response.headers['Content-Type'] = 'application/json'
+        spawns = CthulhuData.spawns()
+        return json.dumps(spawns)
+    
 class Root:
     
     @cherrypy.expose
@@ -27,4 +31,4 @@ class Root:
         mylookup = TemplateLookup(directories=[current_dir + '/webroot'])
         mytemplate = mylookup.get_template('index.html')
 
-        return mytemplate.render(name='world', spawns=spawns)
+        return mytemplate.render(spawns=spawns)

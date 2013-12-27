@@ -25,6 +25,8 @@
         <p class="lead">The Spawn of Cthulhu</p>
       </div>
 
+	<div id="spawn-detected"><button id="refresh" type="button" class="btn btn-success">New Spawn detected, click to refresh</button><br /><br /></div>
+	
 	<table class="table table-bordered" id="filetable">
 		<thead>
 			<tr>
@@ -34,6 +36,7 @@
 			</tr>			
 		</thead>
 		<tbody>
+		
 		% if len(spawns) == 0:
 			<tr><td colspan="4">No Spawn(s) found</td></tr>
 		% endif
@@ -59,14 +62,19 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="js/jquery-2.0.3.min.js"></script>
+    <script src="js/index.js"></script>
     <script>
-	$(".action-sent-msg").click(function() {
-		// alert( "Handler for .click() called." );
-		$.post("/action/sendmsg", function( data ) {
-			alert( "Handler for .click() called." );
-			// $( ".result" ).html( data );
-		});
-	});
+
+		var spawn_count = ${len(spawns)};
+	
+		function update_spawns() {
+
+			$.getJSON( "/action/spawns", function( data ) {
+				if (data.length != spawn_count) {
+					$("#spawn-detected").show();
+				}
+			});
+		}
 	</script>
 
   </body>

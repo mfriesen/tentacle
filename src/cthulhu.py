@@ -4,7 +4,7 @@ import cherrypy
 
 from cherrypy.process.plugins import Monitor
 from tentacle.cthulhu.operation import querySpawns
-from tentacle.cthulhu import Root
+from tentacle.cthulhu import Root, Action
 
 cherrypy.config.update({'server.thread_pool' : 10,
                         'server.socket_port' : 8080,
@@ -18,7 +18,9 @@ config = {
 '/images' : { 'tools.staticdir.on': True, 'tools.staticdir.dir' : 'images' },
 }
 
-cherrypy.tree.mount(Root(), "/", config=config)
+root = Root()
+root.action = Action()
+cherrypy.tree.mount(root, "/", config=config)
 
 Monitor(cherrypy.engine, querySpawns, frequency=5).subscribe()
 
