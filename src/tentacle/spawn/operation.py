@@ -14,6 +14,7 @@ def run_fn(snippet):
         exec snippet
     
         out = sys.stdout.getvalue()
+        out = out.strip().rstrip('\n')
         sys.stdout.close()
     except Exception as e:
         out = str(e)

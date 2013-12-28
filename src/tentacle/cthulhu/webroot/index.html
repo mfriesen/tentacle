@@ -27,38 +27,45 @@
 
 	<div id="spawn-detected"><button id="refresh" type="button" class="btn btn-success">New Spawn detected, click to refresh</button><br /><br /></div>
 	
-	<table class="table table-bordered" id="filetable">
-		<thead>
-			<tr>
-				<th>Host</th>
-				<th>Port</th>
-				<th>Operating System</th>
-				<th class="text-right">Action</td></th>
-			</tr>			
-		</thead>
-		<tbody>
-		
-		% if len(spawns) == 0:
-			<tr><td colspan="4">No Spawn(s) found</td></tr>
-		% endif
-		% for spawn in spawns:
-			<tr>
-				<td>${spawn.steps()[0]['hostname']}&nbsp;(${spawn['spawn']['ipaddress']})</td>
-				<td>${spawn['spawn']['port']}</td>
-				<td>${spawn.steps()[1]['platform']}</td>
-				<td class="text-right">
-					<button class="action-sent-msg btn-link" type="button">Send Msg</button>
-				</td>
-			</tr>
-		% endfor
-		</tbody>
-		<tfoot>
-			<tr>
-				<td colspan="4">
-				<p class="pull-right"><a href="https://github.com/mfriesen/tentacle">github source</a></p></td>
-			</tr>
-		</tfoot>
-	</table>
+	<h3>
+		<div class="input-group">
+  			<span class="input-group-addon">Filter by Text</span>
+  			<input id="filter-text" type="text" class="form-control" placeholder="text">
+		</div>
+	</h3>
+	
+	<div class="panel panel-default">	
+		<table class="table" id="filter-table">
+			<thead>
+				<tr>
+					<th>Host</th>
+					<th>Operating System</th>
+					<th class="text-right">Action</td></th>
+				</tr>			
+			</thead>
+			<tbody id="filter-tbody">
+			
+			% if len(spawns) == 0:
+				<tr><td colspan="4">No Spawn(s) found</td></tr>
+			% endif
+			% for spawn in spawns:
+				<tr>
+					<td>${spawn['spawn']['ipaddress']}:${spawn['spawn']['port']}&nbsp;(${spawn.steps()[0]['hostname']})</td>
+					<td>${spawn.steps()[1]['platform']}</td>
+					<td class="text-right">
+						<button class="action-sent-msg btn-link" type="button">Send Msg</button>
+					</td>
+				</tr>
+			% endfor
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="4">
+					<p class="pull-right"><a href="https://github.com/mfriesen/tentacle">github source</a></p></td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
 		
     <!-- Bootstrap core JavaScript
     ================================================== -->
