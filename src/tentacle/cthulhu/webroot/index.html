@@ -32,6 +32,7 @@
 			<tr>
 				<th>Host</th>
 				<th>Port</th>
+				<th>Operating System</th>
 				<th class="text-right">Action</td></th>
 			</tr>			
 		</thead>
@@ -44,6 +45,7 @@
 			<tr>
 				<td>${spawn.steps()[0]['hostname']}&nbsp;(${spawn['spawn']['ipaddress']})</td>
 				<td>${spawn['spawn']['port']}</td>
+				<td>${spawn.steps()[1]['platform']}</td>
 				<td class="text-right">
 					<button class="action-sent-msg btn-link" type="button">Send Msg</button>
 				</td>
