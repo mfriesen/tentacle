@@ -17,18 +17,21 @@
 		<%include file="components/nav-tabs.html" args="tab='screed-new'" />
       
 		<form class="form-horizontal" role="form">
+		
 			<div class="form-group">
 				<label for="inputName" class="col-sm-1 control-label">Name</label>
 				<div class="col-sm-11">
 					<input type="text" class="form-control" id="inputName" placeholder="Screed Name">
 				</div>
 			</div>
+			
 			<div class="form-group">
 				<label for="inputDescription" class="col-sm-1 control-label">Description</label>
 				<div class="col-sm-11">
 					<input type="text" class="form-control" id="inputDescription" placeholder="Screed Description">
 				</div>
 			</div>
+			
 			<div class="form-group">
 				<label for="inputType" class="col-sm-1 control-label">Type</label>
 				<div class="col-sm-11">
@@ -41,26 +44,10 @@
 
 			<div class="input-group">
 				<div class="input-group-addon form-control" style="text-align:left;color:#333333;">Step(s)</div>
-				<span class="input-group-addon"><button type="button" class="btn btn-primary btn-sm">Add Step</button></span>
+				<span class="input-group-addon"><button id="screed-step-add" type="button" class="btn btn-primary btn-sm">Add Step</button></span>
 			</div>
 			
-			<div class="input-group">&nbsp;</div>
-
-			<div class="input-group">
-			  	<span class="input-group-addon">1</span>
-			  	<div class="form-control" contenteditable>/fileshare/scripts/backup.sh</div>
-				<span class="input-group-addon"><button type="button" class="btn btn-danger btn-sm">Delete</button></span>
-			</div>
-	
-			<div class="input-group">&nbsp;</div>
-			
-			<div class="input-group">
-			  	<span class="input-group-addon">2</span>
-			  	<div class="form-control" contenteditable>/fileshare/scripts/backup.sh</div>
-				<span class="input-group-addon"><button type="button" class="btn btn-danger btn-sm">Delete</button></span>
-			</div>
-	
-			<div class="input-group">&nbsp;</div>
+			<div class="input-group screed-step">&nbsp;</div>
 			
 			<button type="submit" class="btn btn-default">Reset</button>
 			<button type="submit" class="btn btn-default">Save</button>
@@ -68,6 +55,9 @@
 		</form>
 		     	
 	</div>
+
+    <script src="/js/jquery-2.0.3.min.js"></script>
+    <script src="/js/screed-new.js"></script>
  
   </body>
 </html>
