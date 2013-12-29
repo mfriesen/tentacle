@@ -1,0 +1,30 @@
+<%page args="tab='index'"/>
+
+% if tab == 'index':
+	<div class='pull-right control-group'>
+		<div class='clearfix'>
+			<input id="filter-text" type="text" autofocus="" required="" placeholder="Search..." class="form-control" size="50" style="width:300px;">
+		</div>
+	</div>
+% endif
+
+<ul class="nav nav-tabs" style="margin-bottom:25px;">
+	<li 
+	% if tab == 'index': 
+		class="active"
+	% endif
+	><a href="/">Home</a></li>
+	
+	<li
+	% if tab == 'screed': 
+		class="active"
+	% endif
+	><a href="/screed">Screed(s)</a></li>
+
+	<li
+	% if tab == 'screed-new': 
+		class="active"
+	% endif
+	><a href="/screed/new">New Screed</a></li>
+	
+</ul>

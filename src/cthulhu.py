@@ -4,7 +4,7 @@ import cherrypy
 
 from cherrypy.process.plugins import Monitor
 from tentacle.cthulhu.operation import querySpawns
-from tentacle.cthulhu import Root, Action
+from tentacle.cthulhu import Root, Action, Screed
 
 cherrypy.config.update({'server.thread_pool' : 10,
                         'server.socket_port' : 8080,
@@ -20,6 +20,7 @@ config = {
 
 root = Root()
 root.action = Action()
+root.screed = Screed()
 cherrypy.tree.mount(root, "/", config=config)
 
 Monitor(cherrypy.engine, querySpawns, frequency=5).subscribe()

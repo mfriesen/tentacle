@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Tentacle: The Spawn of Cthulhu</title>
+    <%include file="components/head.html" />
+
+  </head>
+
+  <body>
+    <div class="container">
+ 
+ 		<div class="page-header">
+        	<h1>Tentacle Server</h1>
+        	<p class="lead">The Screed Builder</p>
+      	</div>
+      	
+		<%include file="components/nav-tabs.html" args="tab='screed'" />
+		
+		<div class="panel panel-default">	
+			<table class="table" id="filter-table">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody id="filter-tbody">
+			
+				% if len(screeds) == 0:
+					<tr><td class="text-center" colspan="3">No Screed(s) found</td></tr>
+				% endif
+				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="3">
+						<p class="pull-right"><a href="https://github.com/mfriesen/tentacle">github page</a></p></td>
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+		     	
+	</div>
+ 
+  </body>
+</html>

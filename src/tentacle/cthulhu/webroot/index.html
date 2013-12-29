@@ -1,77 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="shortcut icon" href="ico/favicon.png">
 
     <title>Tentacle: The Spawn of Cthulhu</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Custom styles for this template -->
-    <link href="css/grid.css" rel="stylesheet">
-
+	<%include file="components/head.html" />
+	
   </head>
 
   <body>
     <div class="container">
  
-      <div class="page-header">
-        <h1>Tentacle Server</h1>
-        <p class="lead">The Spawn of Cthulhu</p>
-      </div>
+		<div class="page-header">
+        	<h1>Tentacle Server</h1>
+        	<p class="lead">The Spawn of Cthulhu</p>
+      	</div>
+		
+		<%include file="components/nav-tabs.html" args="tab='index'" />
 
-	<div id="spawn-detected"><button id="refresh" type="button" class="btn btn-success">New Spawn detected, click to refresh</button><br /><br /></div>
-	
-	<h3>
-		<div class="input-group">
-  			<span class="input-group-addon">Text Filter</span>
-  			<input id="filter-text" type="text" class="form-control" placeholder="text">
-		</div>
-	</h3>
-	
-	<div class="panel panel-default">	
-		<table class="table" id="filter-table">
-			<thead>
-				<tr>
-					<th>Host</th>
-					<th>Operating System</th>
-					<th class="text-right">Action</td></th>
-				</tr>			
-			</thead>
-			<tbody id="filter-tbody">
+		<div id="spawn-detected"><button id="refresh" type="button" class="btn btn-success">New Spawn detected, click to refresh</button><br /><br /></div>
+		
+		<div class="panel panel-default">	
+			<table class="table" id="filter-table">
+				<thead>
+					<tr>
+						<th>Host</th>
+						<th>Operating System</th>
+						<th class="text-right">Action</td></th>
+					</tr>
+				</thead>
+				<tbody id="filter-tbody">
 			
-			% if len(spawns) == 0:
-				<tr><td colspan="4">No Spawn(s) found</td></tr>
-			% endif
-			% for spawn in spawns:
-				<tr>
-					<td>${spawn['spawn']['ipaddress']}:${spawn['spawn']['port']}&nbsp;(${spawn.steps()[0]['hostname']})</td>
-					<td>${spawn.steps()[1]['platform']}</td>
-					<td class="text-right">
-						<button class="action-sent-msg btn-link" type="button">Send Msg</button>
-					</td>
-				</tr>
-			% endfor
-			</tbody>
-			<tfoot>
-				<tr>
-					<td colspan="4">
-					<p class="pull-right"><a href="https://github.com/mfriesen/tentacle">github source</a></p></td>
-				</tr>
-			</tfoot>
-		</table>
+				% if len(spawns) == 0:
+					<tr><td class="text-center" colspan="3">No Spawn(s) found</td></tr>
+				% endif
+				% for spawn in spawns:
+					<tr>
+						<td>${spawn['spawn']['ipaddress']}:${spawn['spawn']['port']}&nbsp;(${spawn.steps()[0]['hostname']})</td>
+						<td>${spawn.steps()[1]['platform']}</td>
+						<td class="text-right">
+							<button class="action-sent-msg btn-link" type="button">Send Msg</button>
+						</td>
+					</tr>
+				% endfor
+				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="3">
+						<p class="pull-right"><a href="https://github.com/mfriesen/tentacle">github page</a></p></td>
+					</tr>
+				</tfoot>
+			</table>
+		</div>
 	</div>
 		
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="js/jquery-2.0.3.min.js"></script>
-    <script src="js/index.js"></script>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+    <script src="/js/index.js"></script>
     <script>
 
 		var spawn_count = ${len(spawns)};

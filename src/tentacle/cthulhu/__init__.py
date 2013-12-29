@@ -20,12 +20,29 @@ class Action:
         response.headers['Content-Type'] = 'application/json'
         spawns = CthulhuData.spawns()
         return json.dumps(spawns)
+
+class Screed:
+    
+    @cherrypy.expose
+    def index(self):        
+        screeds = list()
+        mylookup = TemplateLookup(directories=[current_dir + '/webroot'])
+        mytemplate = mylookup.get_template('screed.html')
+
+        return mytemplate.render(screeds=screeds)
+
+    @cherrypy.expose
+    def new(self):        
+        #screeds = list()
+        mylookup = TemplateLookup(directories=[current_dir + '/webroot'])
+        mytemplate = mylookup.get_template('screed-new.html')
+
+        return mytemplate.render()
     
 class Root:
     
     @cherrypy.expose
-    def index(self):
-        
+    def index(self):        
         spawns = CthulhuData.spawns()
 
         mylookup = TemplateLookup(directories=[current_dir + '/webroot'])
