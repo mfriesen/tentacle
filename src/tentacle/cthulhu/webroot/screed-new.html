@@ -16,26 +16,26 @@
       	
 		<%include file="components/nav-tabs.html" args="tab='screed-new'" />
       
-		<form class="form-horizontal" role="form">
+		<form id="steps-form" class="form-horizontal" role="form">
 		
 			<div class="form-group">
 				<label for="inputName" class="col-sm-1 control-label">Name</label>
 				<div class="col-sm-11">
-					<input type="text" class="form-control" id="inputName" placeholder="Screed Name">
+					<input type="text" name="screedName" class="form-control" id="inputName" placeholder="Screed Name">
 				</div>
 			</div>
 			
 			<div class="form-group">
 				<label for="inputDescription" class="col-sm-1 control-label">Description</label>
 				<div class="col-sm-11">
-					<input type="text" class="form-control" id="inputDescription" placeholder="Screed Description">
+					<input type="text" name="screedDescription" class="form-control" id="inputDescription" placeholder="Screed Description">
 				</div>
 			</div>
 			
 			<div class="form-group">
 				<label for="inputType" class="col-sm-1 control-label">Type</label>
 				<div class="col-sm-11">
-					<select class="form-control">
+					<select name="screedType" class="form-control">
 						<option>Python</option>
 						<option>Script</option>
 					</select>
@@ -49,8 +49,8 @@
 			
 			<div class="input-group screed-step">&nbsp;</div>
 			
-			<button type="submit" class="btn btn-default">Reset</button>
-			<button type="submit" class="btn btn-default">Save</button>
+			<button id="screed-reset" type="button" class="btn btn-default">Reset</button>
+			<button id="screed-save" type="submit" class="btn btn-default">Save</button>
 			
 		</form>
 		     	

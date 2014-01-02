@@ -18,7 +18,7 @@ class TestOperation(unittest.TestCase):
         result = run_fn(fn)
         
         # then
-        self.assertEqual('cat\nwindow\ndefenestrate\n', result)
+        self.assertEqual('cat\nwindow\ndefenestrate', result)
     
     def test_process_screed_01(self):
         # given
@@ -32,7 +32,8 @@ class TestOperation(unittest.TestCase):
         result = run_screed(spawnConfig, screed.to_json())
         
         # then
-        self.assertEqual('{\n"screed": [\n{\n"loop": "cat\\nwindow\\ndefenestrate\\n"\n}\n], \n"spawn": {\n"id": "9dcc9258-3998-4012-b3cf-0b7bd70e0a4d"\n}\n}', result)
+        expect = '{\n"screed": {\n"steps": [\n{\n"loop": "cat\\nwindow\\ndefenestrate"\n}\n]\n}, \n"spawn": {\n"id": "9dcc9258-3998-4012-b3cf-0b7bd70e0a4d"\n}\n}'
+        self.assertEqual(expect, result)
     
 if __name__ == '__main__':
     unittest.main()

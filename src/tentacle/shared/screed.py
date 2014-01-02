@@ -5,13 +5,9 @@ class Screed(dict):
     STATUS_SUCCESS = "success"
     STATUS_FAIL = "fail"
     STATUS_ERROR = "error"
-
-    screed = None
-    status = None
     
     def __init__(self):
-        self.screed = dict()
-        self.update({"screed" : list()})
+        self.update({"screed" : dict({"steps" : list()})})
     
     '''
     Add key and value to screed
@@ -47,6 +43,12 @@ class Screed(dict):
     Return steps in screed
     '''
     def steps(self):
+        return self.get("screed").get("steps")
+    
+    '''
+    Return the screed
+    '''
+    def screed(self):
         return self.get("screed")
     
     '''
@@ -55,7 +57,7 @@ class Screed(dict):
     '''
     def add_status(self, step = -1, status = None):
         if step > -1: 
-            self.get("screed")[step].update({"status" : status})
+            self.steps()[step].update({"status" : status})
     
     '''
     loads screed from JSON data
@@ -91,7 +93,34 @@ class Screed(dict):
             self.add_status(index, self.STATUS_ERROR)
 
     '''
-    Returns a JSON representation of the Screed
+    Sets the screed's name
+    '''
+    def name(self, name=None):
+        return self.__set__("name", name)
+
+    '''
+    Sets the screed's description
+    '''
+    def description(self, description=None):
+        return self.__set__("description", description)
+
+    '''
+    Sets the screed's type
+    '''
+    def typeValue(self, typeValue=None):
+        return self.__set__("type", typeValue)
+
+    '''
+    Sets the screed's Value
+    '''
+    def __set__(self, key, value=None):
+        if value is not None:
+            self.screed().update({key : value})
+            
+        return self.screed().get(key)
+            
+    '''
+    Returns a JSON representation of the ScreedRoot
     '''
     def to_json(self):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=0)

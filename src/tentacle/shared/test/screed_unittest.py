@@ -6,6 +6,20 @@ class TestScreed(unittest.TestCase):
     def setUp(self):
         pass
         
+    def test_screed_name_description_path(self):
+        # given
+        screed = Screed()
+        
+        # when
+        screed.name("This is screed name")
+        screed.description("This is screed description")
+        screed.typeValue("Python")
+        
+        # then
+        self.assertEqual("This is screed name", screed.name())
+        expect = '{\n"screed": {\n"description": "This is screed description", \n"name": "This is screed name", \n"steps": [], \n"type": "Python"\n}\n}'
+        self.assertEqual(expect, screed.to_json())
+        
     def test_screed_load(self):
         # given
         screed = Screed()
@@ -19,7 +33,7 @@ class TestScreed(unittest.TestCase):
         # then
         self.assertEqual(1, len(screed2.get("screed")))
         
-        expect = '{\n"screed": [\n{\n"hostname": "import socket\\nprint socket.gethostname()"\n}\n]\n}'
+        expect = '{\n"screed": {\n"steps": [\n{\n"hostname": "import socket\\nprint socket.gethostname()"\n}\n]\n}\n}'
         self.assertEqual(expect, screed2.to_json())
     
     def test_screed_status_success(self):
@@ -33,7 +47,7 @@ class TestScreed(unittest.TestCase):
         json = screed.to_json()
         
         # then
-        expect = '{\n"screed": [\n{\n"hostname": "import socket\\nprint socket.gethostname()", \n"status": "success"\n}\n], \n"status": "success"\n}'
+        expect = '{\n"screed": {\n"steps": [\n{\n"hostname": "import socket\\nprint socket.gethostname()", \n"status": "success"\n}\n]\n}, \n"status": "success"\n}'
         self.assertEqual(expect, json)
     
     def test_screed_add_fn_step0(self):
@@ -45,7 +59,7 @@ class TestScreed(unittest.TestCase):
         json = screed.to_json()
         
         # then
-        expect = '{\n"screed": [\n{\n"hostname": "import socket\\nsocket.gethostname()"\n}\n]\n}'
+        expect = '{\n"screed": {\n"steps": [\n{\n"hostname": "import socket\\nsocket.gethostname()"\n}\n]\n}\n}'
         self.assertEqual(expect, json)  
     
     def test_screed_add_fn_step0_2(self):
@@ -58,7 +72,7 @@ class TestScreed(unittest.TestCase):
         json = screed.to_json()
         
         # then
-        expect = '{\n"screed": [\n{\n"hostname": "import socket\\nprint socket.gethostname()", \n"os": "import os\\nprint os.name"\n}\n]\n}'
+        expect = '{\n"screed": {\n"steps": [\n{\n"hostname": "import socket\\nprint socket.gethostname()", \n"os": "import os\\nprint os.name"\n}\n]\n}\n}'
         self.assertEqual(expect, json)  
     
     def test_screed_add_fn_steps(self):
@@ -71,7 +85,7 @@ class TestScreed(unittest.TestCase):
         json = screed.to_json()
         
         # then
-        expect = '{\n"screed": [\n{\n"hostname": "import socket\\nsocket.gethostname()"\n}, \n{}, \n{}, \n{}, \n{}, \n{\n"os": "import os\\nprint os.name"\n}\n]\n}'
+        expect = '{\n"screed": {\n"steps": [\n{\n"hostname": "import socket\\nsocket.gethostname()"\n}, \n{}, \n{}, \n{}, \n{}, \n{\n"os": "import os\\nprint os.name"\n}\n]\n}\n}'
         self.assertEqual(expect, json)  
         
     def test_screed_steps(self):
@@ -115,7 +129,7 @@ class TestScreed(unittest.TestCase):
         result = screed.to_json()
                  
         # then
-        self.assertEqual('{\n"screed": [], \n"spawn": {\n"id": 4098, \n"sape": 4139\n}\n}', result)
+        self.assertEqual( '{\n"screed": {\n"steps": []\n}, \n"spawn": {\n"id": 4098, \n"sape": 4139\n}\n}', result)
         
 if __name__ == '__main__':
     unittest.main()

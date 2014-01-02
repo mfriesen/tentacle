@@ -1,6 +1,6 @@
 from tentacle.shared.screed import Screed
 from tentacle.cthulhu.discovery import MulticastDiscovery
-
+    
 def singleton(cls):
     return cls()
 
@@ -32,7 +32,7 @@ class CthulhuData(object):
                 results.append(screed_result)
             
         return results;
-            
+  
     def spawns(self):
         return self._spawns
     
