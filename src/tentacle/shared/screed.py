@@ -5,7 +5,7 @@ class Screed(dict):
     STATUS_SUCCESS = "success"
     STATUS_FAIL = "fail"
     STATUS_ERROR = "error"
-    
+        
     def __init__(self):
         self.update({"screed" : dict({"steps" : list()})})
     
@@ -120,7 +120,7 @@ class Screed(dict):
         return self.screed().get(key)
             
     '''
-    Returns a JSON representation of the ScreedRoot
+    Returns a JSON representation of the Screed
     '''
     def to_json(self):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=0)

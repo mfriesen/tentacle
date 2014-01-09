@@ -23,6 +23,7 @@
 						<th>Name</th>
 						<th>Type</th>
 						<th>Description</th>
+						<th class="text-right">Action</td></th>
 					</tr>
 				</thead>
 				<tbody id="filter-tbody">
@@ -30,10 +31,20 @@
 				% if len(screeds) == 0:
 					<tr><td class="text-center" colspan="3">No Screed(s) found</td></tr>
 				% endif
+				% for screed in screeds:
+					<tr>
+						<td>${screed.name}</td>
+						<td>${screed.type}</td>
+						<td>${screed.description}</td>
+						<td class="text-right">
+							<a href="/screed/edit?id=${screed.id}">edit</a>
+						</td>
+					</tr>
+				% endfor
 				</tbody>
 				<tfoot>
 					<tr>
-						<td colspan="3">
+						<td colspan="4">
 						<p class="pull-right"><a href="https://github.com/mfriesen/tentacle">github page</a></p></td>
 					</tr>
 				</tfoot>

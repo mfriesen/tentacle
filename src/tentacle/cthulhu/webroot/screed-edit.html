@@ -14,31 +14,37 @@
         	<p class="lead">The Screed Builder</p>
       	</div>
       	
-		<%include file="components/nav-tabs.html" args="tab='screed-new'" />
+		<%include file="components/nav-tabs.html" args="tab='screed-edit'" />
       
 		<form id="steps-form" class="form-horizontal" role="form">
 		
+			% if screed is not None:
+			<input type="hidden" name="id" value="${screed.id}" />
+			% endif
+			
 			<div class="form-group">
 				<label for="inputName" class="col-sm-1 control-label">Name</label>
 				<div class="col-sm-11">
-					<input type="text" name="screedName" class="form-control" id="inputName" placeholder="Screed Name">
+					<input type="text" name="name" class="form-control" id="inputName" placeholder="Enter Name">
 				</div>
 			</div>
 			
 			<div class="form-group">
 				<label for="inputDescription" class="col-sm-1 control-label">Description</label>
 				<div class="col-sm-11">
-					<input type="text" name="screedDescription" class="form-control" id="inputDescription" placeholder="Screed Description">
+					<input type="text" name="description" class="form-control" id="inputDescription" placeholder="Enter Description">
 				</div>
 			</div>
 			
 			<div class="form-group">
 				<label for="inputType" class="col-sm-1 control-label">Type</label>
 				<div class="col-sm-11">
-					<select name="screedType" class="form-control">
+
+					<select id="inputType" name="type" class="form-control" placeholder="Select Type">
 						<option>Python</option>
 						<option>Script</option>
 					</select>
+
 				</div>
 			</div>
 
@@ -57,7 +63,16 @@
 	</div>
 
     <script src="/js/jquery-2.0.3.min.js"></script>
-    <script src="/js/screed-new.js"></script>
- 
+    <script src="/js/screed-edit.js"></script>
+
+	% if screed is not None:
+		<script type="text/javascript">
+		//<![CDATA[
+		$("#inputName").val("${screed.name}");
+		$("#inputDescription").val("${screed.description}");
+		$("#inputType").val("${screed.type}"); 
+		//]]>
+		</script>
+	% endif 
   </body>
 </html>

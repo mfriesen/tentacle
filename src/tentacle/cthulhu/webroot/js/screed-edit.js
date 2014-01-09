@@ -38,12 +38,12 @@ $( document ).ready(function() {
 		data = $('#steps-form').serialize();
 
 		$(".screed-step-text").each(function(k, v) {
-			data += "&step=" + $(v).html();
+			data += "&steps=" + $(v).html();
 		});
-
-		$.post( "/screed/save", data, function( data ) {
+		
+		$.post("/screed/edit", data, function(data) {
 			var loc = window.location;
-			window.location = loc.protocol + "//" + loc.hostname + (loc.port && ":"+loc.port) + "/screed/new?screedid=" + data; 
+			window.location = loc.protocol + "//" + loc.hostname + (loc.port && ":"+loc.port) + "/screed/edit?screedid=" + data; 
 		});
 	});
 });
