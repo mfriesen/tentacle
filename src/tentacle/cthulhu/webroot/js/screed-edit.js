@@ -43,7 +43,7 @@ $( document ).ready(function() {
 		
 		$.post("/screed/edit", data, function(data) {
 			var loc = window.location;
-			window.location = loc.protocol + "//" + loc.hostname + (loc.port && ":"+loc.port) + "/screed/edit?screedid=" + data; 
+			window.location = loc.protocol + "//" + loc.hostname + (loc.port && ":"+loc.port) + "/screed/edit?id=" + data; 
 		});
 	});
 });
