@@ -22,7 +22,8 @@ def save_screed(base):
 def get_screed(base_id):
     session = Session()
     base = session.query(ScreedBase).get(base_id)
-    session.expunge(base)
+    if base is not None:
+        session.expunge(base)
     return base
     
 def get_screeds():

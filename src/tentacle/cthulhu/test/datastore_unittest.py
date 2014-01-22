@@ -29,13 +29,13 @@ class TestDatastore(unittest.TestCase):
     def test_save_02(self):
         # given
         base = self.create_screed()
+        base = get_screed(base.id)
         self.assertEquals("Name", base.name)
         base.name = "New Name"
         save_screed(base)
         
         # when
         result = get_screed(base.id)
-        
         
         # then
         self.assertTrue(result.id > 0)

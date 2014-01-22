@@ -68,6 +68,13 @@ class ScreedRoot:
 
         return mytemplate.render(screed = screed)
     
+    @cherrypy.expose
+    def delete(self, **kwargs):
+        if 'id' in kwargs:
+            delete_screed(kwargs['id'])
+        
+        return 'done'
+    
 class Root:
     
     @cherrypy.expose
