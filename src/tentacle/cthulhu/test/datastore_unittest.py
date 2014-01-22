@@ -1,7 +1,7 @@
 import unittest
  
 from tentacle.cthulhu.datastore import save_screed, ScreedBase, get_screed,\
-    get_screeds, delete_screeds
+    get_screeds, delete_screeds, delete_screed
 
 class TestDatastore(unittest.TestCase):
         
@@ -73,6 +73,16 @@ class TestDatastore(unittest.TestCase):
         
         # then
         self.assertEquals(1, len(result))
+    
+    def test_delete_screed_01(self):
+        # given
+        base = self.create_screed()
+        
+        # when
+        delete_screed(base.id)
+        
+        # then
+        self.assertIsNone(get_screed(base.id))
         
 if __name__ == '__main__':
     unittest.main()

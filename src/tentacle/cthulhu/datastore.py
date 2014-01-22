@@ -30,6 +30,14 @@ def get_screeds():
     session = Session()
     return session.query(ScreedBase).order_by(ScreedBase.name).all()
 
+def delete_screed(base_id):
+    session = Session()
+    
+    base = session.query(ScreedBase).get(base_id)
+    if base is not None:
+        session.delete(base)
+    session.commit()
+    
 def delete_screeds():
     session = Session()
     session.query(ScreedBase).delete()

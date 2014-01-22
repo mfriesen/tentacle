@@ -73,7 +73,7 @@ class ScreedRoot:
         if 'id' in kwargs:
             delete_screed(kwargs['id'])
         
-        return 'done'
+        raise cherrypy.HTTPRedirect("/screed")
     
 class Root:
     
