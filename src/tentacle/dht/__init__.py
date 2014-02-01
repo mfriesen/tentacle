@@ -5,6 +5,7 @@ import logging
 import socket
 import sys
 import base64
+import struct
 
 from bencode import bencode, bdecode
 
@@ -21,8 +22,10 @@ class DHTRequest(object):
 class DHTResponse(dict):
     
     def __init__(self, response):
-        self.update(bdecode(response))
-        print self
+
+        rec = bdecode(response)
+        self.update(rec)
+        logger.debug(self)
         
     def transaction_id(self):
         return self['t']
@@ -42,7 +45,6 @@ class DHTResponse(dict):
 class DHT(object):
     
     def __init__(self, id_, default_host="router.bittorrent.com", default_port=6881):
-        print "id ", base64.b64encode(id_)
         self._id = id_
         self._default_host = default_host
         self._default_port = default_port
@@ -53,45 +55,80 @@ class DHT(object):
     def ping(self):
         q = { "t" : "aa", "y":"q", "q" : "ping", "a":{"id":self._id}}
         request = DHTRequest(self._default_host, self._default_port, bencode(q))
-        #response = self.send_request(request)
-        reply = "d1:rd2:id20:mnopqrstuvwxyz123456e1:t2:aa1:y1:re"   
-        response = DHTResponse(reply)
+        response = self.send_request(request)
         return response
  
+    """
+    convert long int to dotted quad string
+    """
+    def numToDottedQuad(self, n):
+        d = 256 * 256 * 256
+        q = []
+        while d > 0:
+            m, n = divmod(n, d)
+            q.append(str(m))
+            d /= 256
+
+        return '.'.join(q)
+
+    """
+    Decode node_info into a list of id, connect_info
+    """
+    def decode_nodes(self, nodes):
+        nrnodes = len(nodes) / 26        
+        nodes = struct.unpack("!" + "20sIH" * nrnodes, nodes)
+        for i in xrange(nrnodes):
+            id_, ip, port = nodes[i * 3], self.numToDottedQuad(nodes[i * 3 + 1]), nodes[i * 3 + 2]
+            #print "id_ " , base64.b64encode(id_) , "IP " , ip , " PORT ", port
+            self.strxor(self._id, id_)
+            print self.node_distance(self._id, id_)
+
     """
     sends find_node request to network
     """
     def find_node(self, node_id):
         q = {"t":"aa", "y":"q", "q":"find_node", "a":{"id":self._id, "target":node_id}}
         request = DHTRequest(self._default_host, self._default_port, bencode(q))
-        #response = self.send_request(request)
-        reply = "d1:rd2:id20:0123456789abcdefghij5:nodes9:def456...e1:t2:aa1:y1:re"   
-        response = DHTResponse(reply)
+        response = self.send_request(request)
+        
+        v = response.response_dic()['nodes']
+        self.decode_nodes(v)
         return response
     
+    """
+    calculates the distance between 2 nodes
+    """
+    def node_distance(self, id1, id2):
+        return int(hashlib.sha1(id1).hexdigest(), 16) ^ int(hashlib.sha1(id2).hexdigest(), 16)
+        
     def send_request(self, request):
-        try:
-            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        
+        socket = self.__create_socket__()
             
+        response = self.__send_request__(socket, request)
+        
+        return response
+    
+    def __create_socket__(self):
+        try:
+            return socket.socket(socket.AF_INET, socket.SOCK_DGRAM)            
         except socket.error:
             raise 'Failed to create socket'
-            
+    
+    def __send_request__(self, socket, request):
         try :
-            # TODO mock...
-            s.sendto(request.data, (request.host, request.port))
+            socket.sendto(request.data, (request.host, request.port))
     
             # receive data from client (data, addr)
-            d = s.recvfrom(1024)
+            d = socket.recvfrom(1024)
             reply = d[0]
-            addr = d[1]
+            #addr = d[1]
          
-            print 'Server reply : ' + reply + " from address " , addr[0] , " port " ,addr[1]
-               
             return DHTResponse(reply)
      
         except socket.error, msg:
             raise 'Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
-            
+        
 if __name__ == "__main__":
     
     logger.setLevel(logging.DEBUG)
