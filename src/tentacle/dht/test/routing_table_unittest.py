@@ -1,7 +1,7 @@
 import unittest
 import hashlib
 
-from tentacle.dht.routing_table import distance
+from tentacle.dht.routing_table import distance, most_sign_bits
 
 class TestRoutingTable(unittest.TestCase):
     
@@ -48,5 +48,27 @@ class TestRoutingTable(unittest.TestCase):
             
         self.assertIsNone(result)
             
+    def test_most_sign_bits_01(self):        
+        # given
+        s = "a"
+        sig_bits = 2
+        
+        # when
+        result = most_sign_bits(s, sig_bits)
+        
+        # then
+        self.assertEquals("11", result)
+    
+    def test_most_sign_bits_02(self):        
+        # given
+        s = "a"
+        sig_bits = 10
+        
+        # when
+        result = most_sign_bits(s, sig_bits)
+        
+        # then
+        self.assertEquals("1100001000", result)
+        
 if __name__ == '__main__':
     unittest.main()
