@@ -1,11 +1,8 @@
 
-def most_sign_bits(s, sig_bits):
-    
+def most_sign_bits(s, sig_bits):    
     b = ''.join(format(x, 'b') for x in bytearray(s))
-        
-    if len(b) < sig_bits:
-        b += ''.join(['0' for _ in range(0, sig_bits)])
-
+    b = ("0" * (4 - (len(b) % 4))) + b + ("0" * sig_bits)
+    
     return b[:sig_bits]
 
 def distance(s1, s2):
@@ -35,19 +32,3 @@ class DHTRoutingTable(object):
     
     def find_closest_node(self, node_id):
         raise NotImplemented
-
-class DHTRoutingBucket(object):
-    pass
-
-class DHTRoutingBucketTable(DHTRoutingTable):
-    
-    def __init__(self):
-        self._nodes = {}
-    
-    def add_node(self, node_id, node):
-        self._nodes[node_id] = node
-        
-    def find_closest_node(self, node_id):
-        # If we have no known nodes, exception!
-        if len(self._nodes) == 0:
-            raise RuntimeError, "No nodes in routing table!"
