@@ -9,53 +9,45 @@ class BNode(object):
 
 class BTree(object):
     
-    def __init__(self):
+    def __init__(self, root):
         # initializes the root member
-        self.root = None
+        self.root = root
     
-    def insert(self, data):
-        node = BNode(data)
+    def insert(self, root, node):
         
-        self.__insert__(self.root, node)
-        
-        if self.root is None:
-            self.root = node
-        
-        return node
-
-    def __insert__(self, root, node):
-        # inserts a new data
-        if root == None:
-            # it there isn't any data
-            # adds it and returns
-            return node
-        else:
-            # enters into the tree
-            if node.data <= root.data:
-                # if the data is less than the stored one
-                # goes into the left-sub-tree
-                root.left = self.__insert__(root.left, node)
+        if self.__insert_compare__(root, node):
+            if root.left is None:
+                root.left = node
+                return root.left
             else:
-                # processes the right-sub-tree
-                root.right = self.__insert__(root.right, node)
-
-            return root
-        
-    def lookup(self, root, target):
+                return root.left.insert(root.left, node)
+        else:
+            if root.right is None:
+                root.right = node
+                return root.right
+            else:
+                return root.right.insert(root.right, node)
+            
+            return root.right
+    
+    def __insert_compare__(self, root, node):
+        return node.data < root.data
+     
+    def find(self, root, data):
         # looks for a value into the tree
         if root == None:
-            return 0
+            return root
         else:
             # if it has found it...
-            if target == root.data:
-                return 1
+            if data == root.data:
+                return root
             else:
-                if target < root.data:
+                if data < root.data:
                     # left side
-                    return self.lookup(root.left, target)
+                    return self.find(root.left, data)
                 else:
                     # right side
-                    return self.lookup(root.right, target)
+                    return self.find(root.right, data)
         
     def maxDepth(self, root):
         if root == None:

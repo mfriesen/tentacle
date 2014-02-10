@@ -51,35 +51,32 @@ class TestRoutingTable(unittest.TestCase):
     def test_most_sign_bits_01(self):        
         # given
         s = "a"  # 0110 0001
-        sig_bits = 4
         
         # when
-        result = most_sign_bits(s, sig_bits)
+        result = most_sign_bits(s)
         
         # then
-        self.assertEquals("0110", result)
+        self.assertEquals("01100001", result)
     
-    def test_most_sign_bits_02(self):        
-        # given
-        s = "a"
-        sig_bits = 10
-        
-        # when
-        result = most_sign_bits(s, sig_bits)
-        
-        # then
-        self.assertEquals("0110000100", result)
-
-    def test_most_sign_bits_03(self):        
+    def test_most_sign_bits_02(self):
         # given
         s = "5"  # 0011 0101
-        sig_bits = 10
         
         # when
-        result = most_sign_bits(s, sig_bits)
+        result = most_sign_bits(s)
         
         # then
-        self.assertEquals("0011010100", result)    
+        self.assertEquals("00110101", result)    
     
+    def test_most_sign_bits_03(self):
+        # given
+        s = "10" # 0011 0001 0011 0000
+        
+        # when
+        result = most_sign_bits(s)
+        
+        # then
+        self.assertEquals("0011000100110000", result)    
+        
 if __name__ == '__main__':
     unittest.main()

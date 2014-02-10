@@ -1,9 +1,7 @@
 
-def most_sign_bits(s, sig_bits):    
-    b = ''.join(format(x, 'b') for x in bytearray(s))
-    b = ("0" * (4 - (len(b) % 4))) + b + ("0" * sig_bits)
-    
-    return b[:sig_bits]
+def most_sign_bits(s):
+    b = ''.join(format(x, '008b') for x in bytearray(s))
+    return b
 
 def distance(s1, s2):
     s1 = str(s1)
