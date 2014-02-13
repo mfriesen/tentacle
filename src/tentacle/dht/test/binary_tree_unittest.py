@@ -94,8 +94,3 @@ class TestBinaryTree(unittest.TestCase):
         
 if __name__ == '__main__':
     unittest.main()
-    
-#          0    
-#     10         00
-#  100  010  001   000
-#

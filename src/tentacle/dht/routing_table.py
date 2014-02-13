@@ -1,7 +1,10 @@
 
 def most_sign_bits(s):
-    b = ''.join(format(x, '008b') for x in bytearray(s))
-    return b
+    
+    if isinstance(s, basestring):
+        return ''.join(format(x, '008b') for x in bytearray(s))
+    
+    return "{00:b}".format(s).zfill(len(str(s)) * 4)
 
 def distance(s1, s2):
     s1 = str(s1)

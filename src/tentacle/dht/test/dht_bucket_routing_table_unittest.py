@@ -1,6 +1,6 @@
 import unittest
 
-from tentacle.dht.routing_table import distance, most_sign_bits
+#from tentacle.dht.routing_table import distance, most_sign_bits
 from tentacle.dht.dht_bucket_routing_table import DHTBucketRoutingTable
 
 class TestDHTBucketRoutingTable(unittest.TestCase):
@@ -17,86 +17,7 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         result = DHTBucketRoutingTable(id_)
         
         # then
-        node = result.routingTree.root
-        
-        # 0011 0001 0011 0000
-        self.assertIsNotNone(node.left)
-        self.assertIsNone(node.right)
-        node = node.left
-        
-        # 011 0001 0011 0000
-        self.assertIsNotNone(node.left)
-        self.assertIsNone(node.right)
-        node = node.left
-        
-        # 11 0001 0011 0000
-        self.assertIsNone(node.left)
-        self.assertIsNotNone(node.right)
-        node = node.right
-
-        # 1 0001 0011 0000
-        self.assertIsNone(node.left)
-        self.assertIsNotNone(node.right)
-        node = node.right
-        
-        # 0001 0011 0000
-        self.assertIsNotNone(node.left)
-        self.assertIsNone(node.right)
-        node = node.left
-        
-        # 001 0011 0000
-        self.assertIsNotNone(node.left)
-        self.assertIsNone(node.right)
-        node = node.left
-        
-        # 01 0011 0000
-        self.assertIsNotNone(node.left)
-        self.assertIsNone(node.right)
-        node = node.left
-        
-        # 1 0011 0000
-        self.assertIsNone(node.left)
-        self.assertIsNotNone(node.right)
-        node = node.right
-        
-        # 0011 0000
-        self.assertIsNotNone(node.left)
-        self.assertIsNone(node.right)
-        node = node.left
-        
-        # 011 0000
-        self.assertIsNotNone(node.left)
-        self.assertIsNone(node.right)
-        node = node.left
-        
-        # 11 0000
-        self.assertIsNone(node.left)
-        self.assertIsNotNone(node.right)
-        node = node.right
-
-        # 1 0000
-        self.assertIsNone(node.left)
-        self.assertIsNotNone(node.right)
-        node = node.right
-        
-        # 0000
-        self.assertIsNotNone(node.left)
-        self.assertIsNone(node.right)
-        node = node.left
-
-        # 000
-        self.assertIsNotNone(node.left)
-        self.assertIsNone(node.right)
-        node = node.left
-
-        # 00
-        self.assertIsNotNone(node.left)
-        self.assertIsNone(node.right)
-        node = node.left
-        
-        # 0
-        self.assertIsNotNone(node.left)
-        self.assertIsNone(node.right)
+        self.assertEqual(0, len(result.routingTree.root.bucket))
         
     # test empty routing table
     def test_add_node_01(self):

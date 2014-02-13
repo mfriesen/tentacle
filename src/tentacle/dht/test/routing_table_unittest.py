@@ -34,6 +34,18 @@ class TestRoutingTable(unittest.TestCase):
 
     def test_distance_03(self):
         # given
+        id0 = "10"
+        id1 = "51"
+        expect = 41
+        
+        # when
+        result = distance(id0, id1)
+        
+        # then
+        self.assertEqual(expect, result)
+        
+    def test_distance_04(self):
+        # given
         id0 = "123"
         id1 = "1"
         result = None
@@ -77,6 +89,16 @@ class TestRoutingTable(unittest.TestCase):
         
         # then
         self.assertEquals("0011000100110000", result)    
+    
+    def test_most_sign_bits_04(self):
+        # given
+        s = 40 # 0010 1000
         
+        # when
+        result = most_sign_bits(s)
+        
+        # then
+        self.assertEquals("00101000", result)    
+
 if __name__ == '__main__':
     unittest.main()
