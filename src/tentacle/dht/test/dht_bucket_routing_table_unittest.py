@@ -1,6 +1,5 @@
 import unittest
 
-#from tentacle.dht.routing_table import distance, most_sign_bits
 from tentacle.dht.dht_bucket_routing_table import DHTBucketRoutingTable
 
 class TestDHTBucketRoutingTable(unittest.TestCase):
@@ -51,7 +50,30 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         rt.add_node(node_start_id)
         
         # then
-        self.assertEqual(20, len(rt.routingTree.root.bucket))
+        # level 0
+        node0 = rt.routingTree.root
+        self.assertIsNone(node0.bucket)
+        self.assertEqual(0, node0.level)
+        self.assertIsNotNone(node0.left)
+        self.assertIsNotNone(node0.right)
+        
+        # level 1
+        node_left1 = node0.left
+        self.assertEqual(1, node_left1.level)
+        self.assertIsNone(node_left1.bucket)
+        
+        node_right1 = node0.left
+        self.assertEqual(1, node_right1.level)
+        self.assertIsNone(node_right1.bucket)
+        
+        # level 2
+        node_left2 = node_left1.left
+        self.assertEqual(2, node_left2.level)
+        self.assertEqual(10, len(node_left2.bucket))
+
+        node_right2 = node_right1.right
+        self.assertEqual(2, node_right2.level)
+        self.assertEqual(10, len(node_right2.bucket))
 
 if __name__ == '__main__':
     unittest.main()

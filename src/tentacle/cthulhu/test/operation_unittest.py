@@ -60,7 +60,7 @@ class TestOperation(unittest.TestCase):
         
         # when
         results = CthulhuData.send_screed(screed)
-        
+
         # then
         self.assertEqual(1, len(results))
         

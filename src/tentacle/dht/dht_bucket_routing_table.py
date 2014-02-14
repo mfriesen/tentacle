@@ -5,9 +5,10 @@ class DHTBucketNode(BNode):
     
     MAX_BUCKET_SIZE = 20
     
-    def __init__(self, data):
+    def __init__(self, data, level):
         super(DHTBucketNode, self).__init__(data)
         self.bucket = list()
+        self.level = level
         
     def add_node(self, id_):
         self.bucket.append(id_)
@@ -41,11 +42,11 @@ class DHTBucketRoutingTable(DHTRoutingTable):
     
     def __init__(self, id_):
 
-        self.routingTree = DHTBucketBTree(DHTBucketNode(data = 0.5))
+        self.routingTree = DHTBucketBTree(DHTBucketNode(data = 0.5, level = 0))
         
         self._id = id_
-        bits = most_sign_bits(id_)
-        print bits
+        #bits = most_sign_bits(id_)
+        #print bits
 
         #node = self.routingTree.root
         #for s in bits:
@@ -53,8 +54,13 @@ class DHTBucketRoutingTable(DHTRoutingTable):
             #next_node = DHTBucketNode(data = data)
             #node = self.routingTree.insert(node, next_node)
     
+    def __create_node__(self, data, level):
+        data = float(data) * 0.5 + 0.1
+        node = DHTBucketNode(data = data, level = level)
+        return node
+    
     def add_node(self, node_id):
-        print node_id , " ", most_sign_bits(node_id)
+        #print node_id , " ", most_sign_bits(node_id)
         node = self.__find_bucket__(node_id)
         node.add_node(node_id)
         
@@ -77,11 +83,37 @@ class DHTBucketRoutingTable(DHTRoutingTable):
         return node
         
     def __split_bucket__(self, node):
-        print '---- spliting- ---'
-        node.bucket.sort()
+        print '---- spliting- ---' , node.level
+        #node.bucket.sort()
         
-        for s in node.bucket:
-            print most_sign_bits(s)
+        if node.is_bucket_full():
+            
+            zero_list = list()
+            one_list = list()
+            
+            for s in node.bucket:
+                d = distance(self._id, s)
+                bits = most_sign_bits(d)
+                print bits , " " , bits[node.level]
+                if bits[node.level] == "1":
+                    one_list.append(s)
+                else:
+                    zero_list.append(s)
+                        
+            level = node.level + 1
+            zero_node = self.__create_node__(0, level)            
+            one_node = self.__create_node__(1, level)
+            
+            zero_node.bucket = zero_list
+            one_node.bucket = one_list
+            
+            node.bucket = None
+            node.left = zero_node
+            node.right = one_node
+            print "ONE " , len(one_list) , " zero ", len(zero_list)
+                    
+            self.__split_bucket__(zero_node)
+            self.__split_bucket__(one_node)
     
     def find_closest_node(self, node_id):
         # If we have no known nodes, exception!
