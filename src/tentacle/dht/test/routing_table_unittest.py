@@ -1,7 +1,7 @@
 import unittest
 import hashlib
 
-from tentacle.dht.routing_table import distance, most_sign_bits
+from tentacle.dht.routing_table import distance, to_binary
 
 class TestRoutingTable(unittest.TestCase):
     
@@ -60,42 +60,42 @@ class TestRoutingTable(unittest.TestCase):
             
         self.assertIsNone(result)
             
-    def test_most_sign_bits_01(self):        
+    def test_to_binary_01(self):        
         # given
         s = "a"  # 0110 0001
         
         # when
-        result = most_sign_bits(s)
+        result = to_binary(s)
         
         # then
         self.assertEquals("01100001", result)
     
-    def test_most_sign_bits_02(self):
+    def test_to_binary_02(self):
         # given
         s = "5"  # 0011 0101
         
         # when
-        result = most_sign_bits(s)
+        result = to_binary(s)
         
         # then
         self.assertEquals("00110101", result)    
     
-    def test_most_sign_bits_03(self):
+    def test_to_binary_03(self):
         # given
         s = "10" # 0011 0001 0011 0000
         
         # when
-        result = most_sign_bits(s)
+        result = to_binary(s)
         
         # then
         self.assertEquals("0011000100110000", result)    
     
-    def test_most_sign_bits_04(self):
+    def test_to_binary_04(self):
         # given
         s = 40 # 0010 1000
         
         # when
-        result = most_sign_bits(s)
+        result = to_binary(s)
         
         # then
         self.assertEquals("00101000", result)    

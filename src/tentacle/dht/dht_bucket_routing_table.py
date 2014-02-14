@@ -1,4 +1,4 @@
-from tentacle.dht.routing_table import DHTRoutingTable, most_sign_bits, distance
+from tentacle.dht.routing_table import DHTRoutingTable, to_binary, distance
 from tentacle.dht.binary_tree import BTree, BNode
 
 class DHTBucketNode(BNode):
@@ -27,10 +27,10 @@ class DHTBucketBTree(BTree):
             return root
         else:
             if self.__compare__(root.data, data):
-                print 'left'
+                #print 'left'
                 return root.left
             else:
-                print 'right'
+                #print 'right'
                 return root.right
 
     def __compare__(self, data0, data1):
@@ -45,7 +45,7 @@ class DHTBucketRoutingTable(DHTRoutingTable):
         self.routingTree = DHTBucketBTree(DHTBucketNode(data = 0.5, level = 0))
         
         self._id = id_
-        #bits = most_sign_bits(id_)
+        #bits = to_binary(id_)
         #print bits
 
         #node = self.routingTree.root
@@ -60,7 +60,7 @@ class DHTBucketRoutingTable(DHTRoutingTable):
         return node
     
     def add_node(self, node_id):
-        #print node_id , " ", most_sign_bits(node_id)
+        #print node_id , " ", to_binary(node_id)
         node = self.__find_bucket__(node_id)
         node.add_node(node_id)
         
@@ -72,7 +72,7 @@ class DHTBucketRoutingTable(DHTRoutingTable):
         node = self.routingTree.root
         d = distance(self._id, node_id)
         
-        for s in most_sign_bits(d):
+        for s in to_binary(d):
             if s == "0" and node.left is None:
                 break
             elif s == "1" and node.right is None:
@@ -93,8 +93,8 @@ class DHTBucketRoutingTable(DHTRoutingTable):
             
             for s in node.bucket:
                 d = distance(self._id, s)
-                bits = most_sign_bits(d)
-                print bits , " " , bits[node.level]
+                bits = to_binary(d)
+                #print bits , " " , bits[node.level]
                 if bits[node.level] == "1":
                     one_list.append(s)
                 else:
@@ -110,7 +110,7 @@ class DHTBucketRoutingTable(DHTRoutingTable):
             node.bucket = None
             node.left = zero_node
             node.right = one_node
-            print "ONE " , len(one_list) , " zero ", len(zero_list)
+            #print "ONE " , len(one_list) , " zero ", len(zero_list)
                     
             self.__split_bucket__(zero_node)
             self.__split_bucket__(one_node)

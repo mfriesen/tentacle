@@ -1,5 +1,5 @@
 
-def most_sign_bits(s):
+def to_binary(s):
     
     if isinstance(s, basestring):
         return ''.join(format(x, '008b') for x in bytearray(s))
