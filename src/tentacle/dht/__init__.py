@@ -8,6 +8,8 @@ import base64
 import struct
 
 from bencode import bencode, bdecode
+from tentacle.dht.dht_bucket_routing_table import DHTBucketRoutingTable
+from tentacle.dht.routing_table import DHTRoutingTable
 
 # See http://docs.python.org/library/logging.html
 logger = logging.getLogger(__name__)
@@ -44,10 +46,15 @@ class DHTResponse(dict):
         
 class DHT(object):
     
-    def __init__(self, id_, default_host="router.bittorrent.com", default_port=6881):
+    def __init__(self, id_, routing_table  = None, default_host="router.bittorrent.com", default_port=6881):
         self._id = id_
         self._default_host = default_host
         self._default_port = default_port
+        
+        if routing_table is None:
+            routing_table = DHTBucketRoutingTable(self._id)
+            
+        self._routing_table = routing_table
     
     """
     sends ping request for an Node
@@ -79,9 +86,10 @@ class DHT(object):
         nodes = struct.unpack("!" + "20sIH" * nrnodes, nodes)
         for i in xrange(nrnodes):
             id_, ip, port = nodes[i * 3], self.numToDottedQuad(nodes[i * 3 + 1]), nodes[i * 3 + 2]
-            #print "id_ " , base64.b64encode(id_) , "IP " , ip , " PORT ", port
-            self.strxor(self._id, id_)
-            print self.node_distance(self._id, id_)
+            self._routing_table.add_node(id_)
+            print "id_ " , base64.b64encode(id_) , "IP " , ip , " PORT ", port
+            #self.strxor(self._id, id_)
+            #print self.node_distance(self._id, id_)
 
     """
     sends find_node request to network

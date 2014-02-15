@@ -67,7 +67,9 @@ class TestDht(unittest.TestCase):
         self.assertFalse(result.is_query())
         self.assertFalse(result.is_error())
         
-        dic = result.response_dic()
+        rt = self.dht._routing_table.routingTree
+        self.assertEqual(16, len(rt.root.bucket))
+        #dic = result.response_dic()
 
     
 if __name__ == '__main__':

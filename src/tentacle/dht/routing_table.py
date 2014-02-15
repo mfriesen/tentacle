@@ -25,11 +25,8 @@ class DHTNode(object):
 
 class DHTRoutingTable(object):
     
-    def add_node(self, node_id, node):
+    def add_node(self, node_id):
         raise NotImplemented
-    
-    def delete_node(self, node):
-        raise NotImplemented
-    
+        
     def find_closest_node(self, node_id):
         raise NotImplemented

@@ -7,11 +7,11 @@ class DHTBucketNode(BNode):
     
     def __init__(self, data, level):
         super(DHTBucketNode, self).__init__(data)
-        self.bucket = list()
+        self.bucket = dict()
         self.level = level
         
     def add_node(self, id_):
-        self.bucket.append(id_)
+        self.bucket[id_] = id_
         
     def is_bucket_full(self):
         return len(self.bucket) == DHTBucketNode.MAX_BUCKET_SIZE        

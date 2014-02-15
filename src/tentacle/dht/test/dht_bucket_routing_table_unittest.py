@@ -75,5 +75,21 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         self.assertEqual(2, node_right2.level)
         self.assertEqual(10, len(node_right2.bucket))
 
+    # test adding duplicate nodes
+    def test_add_node_03(self):
+        # given
+        id_ = "10"      # 0011 0001 0011 0000
+        node_id = "50"  # 0011 0101 0011 0000        
+        rt = DHTBucketRoutingTable(id_)
+        
+        self.assertEqual(0, len(rt.routingTree.root.bucket))
+ 
+        # when
+        rt.add_node(node_id)
+        rt.add_node(node_id)
+        
+        # then
+        self.assertEqual(1, len(rt.routingTree.root.bucket))
+        
 if __name__ == '__main__':
     unittest.main()
