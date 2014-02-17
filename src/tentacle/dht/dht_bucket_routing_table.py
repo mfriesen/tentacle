@@ -1,20 +1,25 @@
-from tentacle.dht.routing_table import DHTRoutingTable, to_binary, distance
+from tentacle.dht.routing_table import DHTRoutingTable, distance
 from tentacle.dht.binary_tree import BTree, BNode
+from math import pow
 
 class DHTBucketNode(BNode):
     
-    MAX_BUCKET_SIZE = 20
+    MAX_BUCKET_SIZE = 8
     
-    def __init__(self, data, level):
+    def __init__(self, data, min_, max_):
         super(DHTBucketNode, self).__init__(data)
-        self.bucket = dict()
-        self.level = level
+        self._bucket = dict()
+        self._min = int(min_)
+        self._max = int(max_)
         
     def add_node(self, id_):
-        self.bucket[id_] = id_
+        self._bucket[id_] = id_
         
     def is_bucket_full(self):
-        return len(self.bucket) == DHTBucketNode.MAX_BUCKET_SIZE        
+        return len(self._bucket) >= DHTBucketNode.MAX_BUCKET_SIZE
+    
+    def is_node_id_within_bucket(self, node_id):
+        return (self._min < node_id) and (node_id <= self._max)        
 
 class DHTBucketBTree(BTree):
     
@@ -27,10 +32,8 @@ class DHTBucketBTree(BTree):
             return root
         else:
             if self.__compare__(root.data, data):
-                #print 'left'
                 return root.left
             else:
-                #print 'right'
                 return root.right
 
     def __compare__(self, data0, data1):
@@ -38,83 +41,70 @@ class DHTBucketBTree(BTree):
 
 class DHTBucketRoutingTable(DHTRoutingTable):
     
-    routingTree = None
+    _routingTree = None
     
     def __init__(self, id_):
-
-        self.routingTree = DHTBucketBTree(DHTBucketNode(data = 0.5, level = 0))
-        
+        self._routingTree = DHTBucketBTree(DHTBucketNode(data = 0.5, min_ = 0, max_ = pow(2, 160)))        
         self._id = id_
-        #bits = to_binary(id_)
-        #print bits
-
-        #node = self.routingTree.root
-        #for s in bits:
-            #data = float(s) * 0.5 + 0.1
-            #next_node = DHTBucketNode(data = data)
-            #node = self.routingTree.insert(node, next_node)
     
-    def __create_node__(self, data, level):
+    def __create_node__(self, data, min_, max_):
         data = float(data) * 0.5 + 0.1
-        node = DHTBucketNode(data = data, level = level)
+        node = DHTBucketNode(data = data, min_ = min_, max_ = max_)
         return node
     
     def add_node(self, node_id):
-        #print node_id , " ", to_binary(node_id)
-        node = self.__find_bucket__(node_id)
+
+        node = self.__find_bucket__(self._routingTree._root, node_id)
         node.add_node(node_id)
         
         if node.is_bucket_full():
             self.__split_bucket__(node)
     
-    def __find_bucket__(self, node_id):
-                
-        node = self.routingTree.root
-        d = distance(self._id, node_id)
-        
-        for s in to_binary(d):
-            if s == "0" and node.left is None:
-                break
-            elif s == "1" and node.right is None:
-                break
-            else:
-                node = node.right if s == "1" else node.left
-                    
+    def __find_bucket__(self, node, node_id):
+         
+        if node is not None and node.is_node_id_within_bucket(node_id):
+            
+            if node._left is not None and node._left.is_node_id_within_bucket(node_id):
+                node = self.__find_bucket__(node._left, node_id)
+
+            if node._right is not None and node._right.is_node_id_within_bucket(node_id):
+                node = self.__find_bucket__(node._right, node_id)
+
         return node
         
     def __split_bucket__(self, node):
-        print '---- spliting- ---' , node.level
-        #node.bucket.sort()
         
         if node.is_bucket_full():
+
+            distance_map = dict()
             
-            zero_list = list()
-            one_list = list()
+            left_node = self.__create_node__(0, node._min, node._max / 2 + 1)
+            right_node = self.__create_node__(1, node._max / 2, node._max)
             
-            for s in node.bucket:
-                d = distance(self._id, s)
-                bits = to_binary(d)
-                #print bits , " " , bits[node.level]
-                if bits[node.level] == "1":
-                    one_list.append(s)
-                else:
-                    zero_list.append(s)
-                        
-            level = node.level + 1
-            zero_node = self.__create_node__(0, level)            
-            one_node = self.__create_node__(1, level)
+            for s in node._bucket:
+                
+                distance_map[distance(self._id, s)] = s
+                
+                if right_node.is_node_id_within_bucket(s):
+                    right_node.add_node(s)
+                elif left_node.is_node_id_within_bucket(s):
+                    left_node.add_node(s)
             
-            zero_node.bucket = zero_list
-            one_node.bucket = one_list
-            
-            node.bucket = None
-            node.left = zero_node
-            node.right = one_node
-            #print "ONE " , len(one_list) , " zero ", len(zero_list)
+            if len(left_node._bucket) > 0 and len(right_node._bucket) > 0 and node.is_node_id_within_bucket(self._id):
+                node._bucket = None
+                node._left = left_node
+                node._right = right_node
+
+                self.__split_bucket__(left_node)
+                self.__split_bucket__(right_node)
+
+            # only keep the closest nodes
+            elif len(node._bucket) > DHTBucketNode.MAX_BUCKET_SIZE:
+                l = sorted(distance_map)
+                
+                for i in range(0, len(node._bucket) - DHTBucketNode.MAX_BUCKET_SIZE):
+                    del node._bucket[distance_map[l[i]]]
                     
-            self.__split_bucket__(zero_node)
-            self.__split_bucket__(one_node)
-    
     def find_closest_node(self, node_id):
         # If we have no known nodes, exception!
         if len(self._nodes) == 0:

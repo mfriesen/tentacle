@@ -1,7 +1,7 @@
 import unittest
 import hashlib
 
-from tentacle.dht.routing_table import distance, to_binary
+from tentacle.dht.routing_table import distance, to_binary, sha1_id
 
 class TestRoutingTable(unittest.TestCase):
     
@@ -100,5 +100,15 @@ class TestRoutingTable(unittest.TestCase):
         # then
         self.assertEquals("00101000", result)    
 
+    def test_sha1_id_01(self):
+        # given
+        s = "sample string"
+        
+        # when
+        result = sha1_id(s)
+        
+        # then
+        self.assertEquals(206627792091191212784374861007573277743147468436L, result
+                          )
 if __name__ == '__main__':
     unittest.main()
