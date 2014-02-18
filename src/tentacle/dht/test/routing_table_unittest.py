@@ -12,7 +12,7 @@ class TestRoutingTable(unittest.TestCase):
         # given
         id0 = 102   # 1010
         id1 = 183   # 0010
-        expect = 81 # 1000
+        expect = 209 # 1000
         
         # when
         result = distance(id0, id1)
@@ -22,8 +22,8 @@ class TestRoutingTable(unittest.TestCase):
             
     def test_distance_02(self):
         # given
-        id0 = hashlib.sha1("salt").digest()
-        id1 = hashlib.sha1("salt").digest()
+        id0 = sha1_id("salt")
+        id1 = sha1_id("salt")
         expect = 0
         
         # when
@@ -36,29 +36,13 @@ class TestRoutingTable(unittest.TestCase):
         # given
         id0 = "10"
         id1 = "51"
-        expect = 41
+        expect = 57
         
         # when
         result = distance(id0, id1)
         
         # then
         self.assertEqual(expect, result)
-        
-    def test_distance_04(self):
-        # given
-        id0 = "123"
-        id1 = "1"
-        result = None
-        
-        # when
-        try:
-            result = distance(id0, id1)
-            
-        # then
-        except Exception, e:
-            self.assertEqual("('distance cannot be calculated length ', 3, ' != ', 1)", str(e))
-            
-        self.assertIsNone(result)
             
     def test_to_binary_01(self):        
         # given

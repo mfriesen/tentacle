@@ -15,7 +15,7 @@ class BTree(object):
     
     def insert(self, root, node):
         
-        if self.__compare__(root.data, node.data):
+        if self.__compare__(root._data, node._data):
             if root._left is None:
                 root._left = node
                 return root._left
@@ -43,11 +43,9 @@ class BTree(object):
                 return root
             else:
                 if self.__compare__(root._data, data):
-                    print 'left'
                     # left side
                     return self.find(root._left, data)
                 else:
-                    print 'right'
                     # right side
                     return self.find(root._right, data)
         
