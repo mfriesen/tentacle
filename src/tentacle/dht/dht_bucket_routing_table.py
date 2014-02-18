@@ -78,8 +78,9 @@ class DHTBucketRoutingTable(DHTRoutingTable):
 
             distance_map = dict()
             
-            left_node = self.__create_node__(0, node._min, node._max / 2 + 1)
-            right_node = self.__create_node__(1, node._max / 2, node._max)
+            half = (node._max - node._min) / 2
+            left_node = self.__create_node__(0, node._min, node._min + half)
+            right_node = self.__create_node__(1, node._min + half + 1, node._max)
             
             for s in node._bucket:
                 
