@@ -136,10 +136,10 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
             rt.add_node(node_id)
             
         # add MAX to left side
-        rt.add_node(root._left._max)
+        rt.add_node(pow(2, 159))
         
         # add MIN to right side //// fix test
-        rt.add_node(root._right._min + 1)
+        rt.add_node(pow(2, 159) + 2)
         
         # then
         self.assertIsNone(root._bucket)
