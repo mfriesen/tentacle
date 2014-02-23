@@ -17,7 +17,7 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         result = DHTBucketRoutingTable(id_)
         
         # then
-        self.assertEqual(0, len(result._routingTree._root._bucket))
+        self.assertEqual(0, len(result._root._bucket))
         
     # test empty routing table
     def test_add_node_01(self):
@@ -26,13 +26,13 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         node_id = "50"  # 0011 0101 0011 0000        
         rt = DHTBucketRoutingTable(id_)
         
-        self.assertEqual(0, len(rt._routingTree._root._bucket))
+        self.assertEqual(0, len(rt._root._bucket))
  
         # when
         rt.add_node(node_id)
         
         # then
-        self.assertEqual(1, len(rt._routingTree._root._bucket))
+        self.assertEqual(1, len(rt._root._bucket))
             
     # test adding duplicate nodes
     def test_add_node_02(self):
@@ -41,14 +41,14 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         node_id = "50"  # 0011 0101 0011 0000        
         rt = DHTBucketRoutingTable(id_)
         
-        self.assertEqual(0, len(rt._routingTree._root._bucket))
+        self.assertEqual(0, len(rt._root._bucket))
  
         # when
         rt.add_node(node_id)
         rt.add_node(node_id)
         
         # then
-        self.assertEqual(1, len(rt._routingTree._root._bucket))
+        self.assertEqual(1, len(rt._root._bucket))
 
     # test add node and split bucket
     def test_add_node_03(self):
@@ -62,14 +62,14 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
             node_id = str(int(node_start_id) + i)
             rt.add_node(sha1_id(node_id))
         
-        self.assertEqual(DHTBucketNode.MAX_BUCKET_SIZE - 1, len(rt._routingTree._root._bucket))
+        self.assertEqual(DHTBucketNode.MAX_BUCKET_SIZE - 1, len(rt._root._bucket))
  
         # when
         rt.add_node(node_start_id)
         
         # then
         # level 0
-        node0 = rt._routingTree._root
+        node0 = rt._root
         self.assertIsNone(node0._bucket)
         self.assertIsNotNone(node0._left)
         self.assertIsNotNone(node0._right)
@@ -93,7 +93,7 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
             rt.add_node(node_id)
 
         # then
-        node0 = rt._routingTree._root
+        node0 = rt._root
         self.assertEqual(DHTBucketNode.MAX_BUCKET_SIZE, len(node0._bucket))
         self.assertIsNone(node0._left)
         self.assertIsNone(node0._right)
@@ -111,7 +111,7 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
             rt.add_node(node_id)
 
         # then
-        node0 = rt._routingTree._root
+        node0 = rt._root
         self.assertEqual(DHTBucketNode.MAX_BUCKET_SIZE, len(node0._bucket))
         self.assertEqual({51: 51, 52: 52, 53: 53, 54: 54, 55: 55, 56: 56, 57: 57, 58: 58}, node0._bucket)
         self.assertIsNone(node0._left)
@@ -124,7 +124,7 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         node_start_id = 50
         
         rt = DHTBucketRoutingTable(id_)
-        root = rt._routingTree._root
+        root = rt._root
          
         # when
         # fill left side

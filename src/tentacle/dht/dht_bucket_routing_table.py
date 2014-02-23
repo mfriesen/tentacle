@@ -1,16 +1,16 @@
 from tentacle.dht.routing_table import DHTRoutingTable, distance
-from tentacle.dht.binary_tree import BTree, BNode
 from math import pow
 
-class DHTBucketNode(BNode):
+class DHTBucketNode(object):
     
     MAX_BUCKET_SIZE = 8
     
-    def __init__(self, data, min_, max_):
-        super(DHTBucketNode, self).__init__(data)
+    def __init__(self, min_, max_):
         self._bucket = dict()
         self._min = int(min_)
         self._max = int(max_)
+        self._left = None
+        self._right = None
         
     def add_node(self, id_):
         self._bucket[id_] = id_
@@ -21,40 +21,21 @@ class DHTBucketNode(BNode):
     def is_node_id_within_bucket(self, node_id):
         return (self._min < node_id) and (node_id <= self._max)        
 
-class DHTBucketBTree(BTree):
-    
-    def __init__(self, root):
-        super(DHTBucketBTree, self).__init__(root)
-
-    def find(self, root, data):
-
-        if root == None:
-            return root
-        else:
-            if self.__compare__(root.data, data):
-                return root.left
-            else:
-                return root.right
-
-    def __compare__(self, data0, data1):
-        return round(data1) < data0
-
 class DHTBucketRoutingTable(DHTRoutingTable):
     
-    _routingTree = None
+    _root = None
     
     def __init__(self, id_):
-        self._routingTree = DHTBucketBTree(DHTBucketNode(data = 0.5, min_ = 0, max_ = pow(2, 160)))        
+        self._root = DHTBucketNode(min_ = 0, max_ = pow(2, 160))        
         self._id = id_
     
-    def __create_node__(self, data, min_, max_):
-        data = float(data) * 0.5 + 0.1
-        node = DHTBucketNode(data = data, min_ = min_, max_ = max_)
+    def __create_node__(self, min_, max_):
+        node = DHTBucketNode(min_ = min_, max_ = max_)
         return node
     
     def add_node(self, node_id):
 
-        node = self.__find_bucket__(self._routingTree._root, node_id)
+        node = self.__find_bucket__(self._root, node_id)
         node.add_node(node_id)
         
         if node.is_bucket_full():
@@ -79,8 +60,8 @@ class DHTBucketRoutingTable(DHTRoutingTable):
             distance_map = dict()
             
             half = (node._max - node._min) / 2
-            left_node = self.__create_node__(0, node._min, node._min + half)
-            right_node = self.__create_node__(1, node._min + half + 1, node._max)
+            left_node = self.__create_node__(node._min, node._min + half)
+            right_node = self.__create_node__(node._min + half + 1, node._max)
             
             for s in node._bucket:
                 
