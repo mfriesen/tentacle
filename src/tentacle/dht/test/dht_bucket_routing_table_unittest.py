@@ -1,7 +1,8 @@
 import unittest
 
 from tentacle.dht.routing_table import sha1_id
-from tentacle.dht.dht_bucket_routing_table import DHTBucketRoutingTable, DHTBucketNode, MAX_BUCKET_SIZE
+from tentacle.dht.dht_bucket_routing_table import DHTBucketRoutingTable, MAX_BUCKET_SIZE,\
+    DHTBucket
 
 class TestDHTBucketRoutingTable(unittest.TestCase):
     
@@ -157,6 +158,23 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         
         self.assertEqual(8, len(root._right._right._bucket._nodes))
         self.assertEqual({1461501637330902918203684832716283019655932542967L: 1461501637330902918203684832716283019655932542967L, 1461501637330902918203684832716283019655932542968L: 1461501637330902918203684832716283019655932542968L, 1461501637330902918203684832716283019655932542969L: 1461501637330902918203684832716283019655932542969L, 1461501637330902918203684832716283019655932542970L: 1461501637330902918203684832716283019655932542970L, 1461501637330902918203684832716283019655932542971L: 1461501637330902918203684832716283019655932542971L, 1461501637330902918203684832716283019655932542972L: 1461501637330902918203684832716283019655932542972L, 1461501637330902918203684832716283019655932542973L: 1461501637330902918203684832716283019655932542973L, 1461501637330902918203684832716283019655932542974L: 1461501637330902918203684832716283019655932542974L}, root._right._right._bucket._nodes)
-    
+
+    def test_truncate_01(self):
+        # given
+        bucket = DHTBucket()
+        
+        for node_id in range(10, 10 + MAX_BUCKET_SIZE + 2):
+            bucket.add_node(node_id)        
+
+        self.assertTrue(bucket.is_bucket_full())
+        self.assertEqual(MAX_BUCKET_SIZE + 2, len(bucket._nodes))
+                
+        # when
+        bucket.truncate(40)
+        
+        # then        
+        self.assertEqual(MAX_BUCKET_SIZE, len(bucket._nodes))
+        self.assertEqual({12: 12, 13: 13, 14: 14, 15: 15, 16: 16, 17: 17, 18: 18, 19: 19}, bucket._nodes)
+        
 if __name__ == '__main__':
     unittest.main()

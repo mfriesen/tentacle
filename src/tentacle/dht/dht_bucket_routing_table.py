@@ -13,6 +13,22 @@ class DHTBucket(object):
 
     def is_bucket_full(self):
         return len(self._nodes) >= MAX_BUCKET_SIZE
+    
+    def is_empty(self):
+        return len(self._nodes) == 0
+    
+    def truncate(self, compare_node_id):
+        if len(self._nodes) > MAX_BUCKET_SIZE:
+            distance_map = dict()
+            
+            for s in self._nodes:
+                distance_map[distance(compare_node_id, s)] = s
+
+            l = sorted(distance_map)
+                
+            for i in range(0, len(self._nodes) - MAX_BUCKET_SIZE):
+                del self._nodes[distance_map[l[i]]]
+
         
 class DHTBucketNode(object):
     
@@ -68,22 +84,18 @@ class DHTBucketRoutingTable(DHTRoutingTable):
         
         if node.is_bucket_full():
 
-            distance_map = dict()
-            
             half = (node._max - node._min) / 2
             left_node = self.__create_node__(node._min, node._min + half)
             right_node = self.__create_node__(node._min + half + 1, node._max)
             
             for s in node._bucket._nodes:
                 
-                distance_map[distance(self._id, s)] = s
-                
                 if right_node.is_node_id_within_bucket(s):
                     right_node.add_node(s)
                 elif left_node.is_node_id_within_bucket(s):
                     left_node.add_node(s)
             
-            if len(left_node._bucket._nodes) > 0 and len(right_node._bucket._nodes) > 0 and node.is_node_id_within_bucket(self._id):
+            if not left_node._bucket.is_empty() and not right_node._bucket.is_empty() and node.is_node_id_within_bucket(self._id):
                 node._bucket = None
                 node._left = left_node
                 node._right = right_node
@@ -91,12 +103,8 @@ class DHTBucketRoutingTable(DHTRoutingTable):
                 self.__split_bucket__(left_node)
                 self.__split_bucket__(right_node)
 
-            # only keep the closest nodes
-            elif len(node._bucket._nodes) > MAX_BUCKET_SIZE:
-                l = sorted(distance_map)
-                
-                for i in range(0, len(node._bucket._nodes) - MAX_BUCKET_SIZE):
-                    del node._bucket._nodes[distance_map[l[i]]]
+            else: # only keep the closest nodes
+                node._bucket.truncate(self._id)
                     
     def find_closest_node(self, node_id):
         # If we have no known nodes, exception!
