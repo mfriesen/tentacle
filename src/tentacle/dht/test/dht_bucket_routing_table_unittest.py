@@ -1,7 +1,7 @@
 import unittest
 
 from tentacle.dht.routing_table import sha1_id
-from tentacle.dht.dht_bucket_routing_table import DHTBucketRoutingTable, DHTBucketNode
+from tentacle.dht.dht_bucket_routing_table import DHTBucketRoutingTable, DHTBucketNode, MAX_BUCKET_SIZE
 
 class TestDHTBucketRoutingTable(unittest.TestCase):
     
@@ -17,7 +17,7 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         result = DHTBucketRoutingTable(id_)
         
         # then
-        self.assertEqual(0, len(result._root._bucket))
+        self.assertEqual(0, len(result._root._bucket._nodes))
         
     # test empty routing table
     def test_add_node_01(self):
@@ -26,13 +26,13 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         node_id = "50"  # 0011 0101 0011 0000        
         rt = DHTBucketRoutingTable(id_)
         
-        self.assertEqual(0, len(rt._root._bucket))
+        self.assertEqual(0, len(rt._root._bucket._nodes))
  
         # when
         rt.add_node(node_id)
         
         # then
-        self.assertEqual(1, len(rt._root._bucket))
+        self.assertEqual(1, len(rt._root._bucket._nodes))
             
     # test adding duplicate nodes
     def test_add_node_02(self):
@@ -41,14 +41,14 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         node_id = "50"  # 0011 0101 0011 0000        
         rt = DHTBucketRoutingTable(id_)
         
-        self.assertEqual(0, len(rt._root._bucket))
+        self.assertEqual(0, len(rt._root._bucket._nodes))
  
         # when
         rt.add_node(node_id)
         rt.add_node(node_id)
         
         # then
-        self.assertEqual(1, len(rt._root._bucket))
+        self.assertEqual(1, len(rt._root._bucket._nodes))
 
     # test add node and split bucket
     def test_add_node_03(self):
@@ -58,11 +58,11 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         rt = DHTBucketRoutingTable(id_)
         node_start_id = 50  # 0011 0101 0011 0000
         
-        for i in range(1, DHTBucketNode.MAX_BUCKET_SIZE):
+        for i in range(1, MAX_BUCKET_SIZE):
             node_id = str(int(node_start_id) + i)
             rt.add_node(sha1_id(node_id))
         
-        self.assertEqual(DHTBucketNode.MAX_BUCKET_SIZE - 1, len(rt._root._bucket))
+        self.assertEqual(MAX_BUCKET_SIZE - 1, len(rt._root._bucket._nodes))
  
         # when
         rt.add_node(node_start_id)
@@ -77,8 +77,8 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         # level 1
         node_left1 = node0._left
         node_right1 = node0._right
-        self.assertEqual(2, len(node_left1._bucket))
-        self.assertEqual(6, len(node_right1._bucket))
+        self.assertEqual(2, len(node_left1._bucket._nodes))
+        self.assertEqual(6, len(node_right1._bucket._nodes))
 
     # test if split is all on one side, don't split    
     def test_add_node_04(self):
@@ -89,12 +89,12 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         node_start_id = 50
 
         # when
-        for node_id in range(node_start_id, node_start_id + DHTBucketNode.MAX_BUCKET_SIZE + 1):
+        for node_id in range(node_start_id, node_start_id + MAX_BUCKET_SIZE + 1):
             rt.add_node(node_id)
 
         # then
         node0 = rt._root
-        self.assertEqual(DHTBucketNode.MAX_BUCKET_SIZE, len(node0._bucket))
+        self.assertEqual(MAX_BUCKET_SIZE, len(node0._bucket._nodes))
         self.assertIsNone(node0._left)
         self.assertIsNone(node0._right)
  
@@ -107,13 +107,13 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         node_start_id = 50
          
         # when
-        for node_id in range(node_start_id, node_start_id + DHTBucketNode.MAX_BUCKET_SIZE + 1):
+        for node_id in range(node_start_id, node_start_id + MAX_BUCKET_SIZE + 1):
             rt.add_node(node_id)
 
         # then
         node0 = rt._root
-        self.assertEqual(DHTBucketNode.MAX_BUCKET_SIZE, len(node0._bucket))
-        self.assertEqual({51: 51, 52: 52, 53: 53, 54: 54, 55: 55, 56: 56, 57: 57, 58: 58}, node0._bucket)
+        self.assertEqual(MAX_BUCKET_SIZE, len(node0._bucket._nodes))
+        self.assertEqual({51: 51, 52: 52, 53: 53, 54: 54, 55: 55, 56: 56, 57: 57, 58: 58}, node0._bucket._nodes)
         self.assertIsNone(node0._left)
         self.assertIsNone(node0._right)
                
@@ -128,11 +128,11 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
          
         # when
         # fill left side
-        for node_id in range(node_start_id, node_start_id + DHTBucketNode.MAX_BUCKET_SIZE + 1):
+        for node_id in range(node_start_id, node_start_id + MAX_BUCKET_SIZE + 1):
             rt.add_node(node_id)
 
         # fill right side
-        for node_id in range(id_ - DHTBucketNode.MAX_BUCKET_SIZE - 1, id_ - 1):
+        for node_id in range(id_ - MAX_BUCKET_SIZE - 1, id_ - 1):
             rt.add_node(node_id)
             
         # add MAX to left side
@@ -146,17 +146,17 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         self.assertIsNotNone(root._left)
         self.assertIsNotNone(root._right)
         
-        self.assertEqual(DHTBucketNode.MAX_BUCKET_SIZE, len(root._left._bucket))
+        self.assertEqual(MAX_BUCKET_SIZE, len(root._left._bucket._nodes))
         self.assertIsNone(root._left._left)
         self.assertIsNone(root._left._right)
-        self.assertEqual({52: 52, 53: 53, 54: 54, 55: 55, 56: 56, 57: 57, 58: 58, 730750818665451459101842416358141509827966271488L: 730750818665451459101842416358141509827966271488L}, root._left._bucket)
+        self.assertEqual({52: 52, 53: 53, 54: 54, 55: 55, 56: 56, 57: 57, 58: 58, 730750818665451459101842416358141509827966271488L: 730750818665451459101842416358141509827966271488L}, root._left._bucket._nodes)
 
         self.assertIsNone(root._right._bucket)
-        self.assertEqual(1, len(root._right._left._bucket))
-        self.assertEqual({730750818665451459101842416358141509827966271490L: 730750818665451459101842416358141509827966271490L}, root._right._left._bucket)
+        self.assertEqual(1, len(root._right._left._bucket._nodes))
+        self.assertEqual({730750818665451459101842416358141509827966271490L: 730750818665451459101842416358141509827966271490L}, root._right._left._bucket._nodes)
         
-        self.assertEqual(8, len(root._right._right._bucket))
-        self.assertEqual({1461501637330902918203684832716283019655932542967L: 1461501637330902918203684832716283019655932542967L, 1461501637330902918203684832716283019655932542968L: 1461501637330902918203684832716283019655932542968L, 1461501637330902918203684832716283019655932542969L: 1461501637330902918203684832716283019655932542969L, 1461501637330902918203684832716283019655932542970L: 1461501637330902918203684832716283019655932542970L, 1461501637330902918203684832716283019655932542971L: 1461501637330902918203684832716283019655932542971L, 1461501637330902918203684832716283019655932542972L: 1461501637330902918203684832716283019655932542972L, 1461501637330902918203684832716283019655932542973L: 1461501637330902918203684832716283019655932542973L, 1461501637330902918203684832716283019655932542974L: 1461501637330902918203684832716283019655932542974L}, root._right._right._bucket)
+        self.assertEqual(8, len(root._right._right._bucket._nodes))
+        self.assertEqual({1461501637330902918203684832716283019655932542967L: 1461501637330902918203684832716283019655932542967L, 1461501637330902918203684832716283019655932542968L: 1461501637330902918203684832716283019655932542968L, 1461501637330902918203684832716283019655932542969L: 1461501637330902918203684832716283019655932542969L, 1461501637330902918203684832716283019655932542970L: 1461501637330902918203684832716283019655932542970L, 1461501637330902918203684832716283019655932542971L: 1461501637330902918203684832716283019655932542971L, 1461501637330902918203684832716283019655932542972L: 1461501637330902918203684832716283019655932542972L, 1461501637330902918203684832716283019655932542973L: 1461501637330902918203684832716283019655932542973L, 1461501637330902918203684832716283019655932542974L: 1461501637330902918203684832716283019655932542974L}, root._right._right._bucket._nodes)
     
 if __name__ == '__main__':
     unittest.main()

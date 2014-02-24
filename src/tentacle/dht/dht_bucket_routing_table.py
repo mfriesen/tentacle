@@ -1,22 +1,33 @@
 from tentacle.dht.routing_table import DHTRoutingTable, distance
 from math import pow
 
+MAX_BUCKET_SIZE = 8
+
+class DHTBucket(object):
+
+    def __init__(self):
+        self._nodes = dict()
+
+    def add_node(self, id_):
+        self._nodes[id_] = id_
+
+    def is_bucket_full(self):
+        return len(self._nodes) >= MAX_BUCKET_SIZE
+        
 class DHTBucketNode(object):
     
-    MAX_BUCKET_SIZE = 8
-    
     def __init__(self, min_, max_):
-        self._bucket = dict()
+        self._bucket = DHTBucket()
         self._min = int(min_)
         self._max = int(max_)
         self._left = None
         self._right = None
         
     def add_node(self, id_):
-        self._bucket[id_] = id_
+        self._bucket.add_node(id_)
         
     def is_bucket_full(self):
-        return len(self._bucket) >= DHTBucketNode.MAX_BUCKET_SIZE
+        return self._bucket.is_bucket_full()
     
     def is_node_id_within_bucket(self, node_id):
         return (self._min < node_id) and (node_id <= self._max)        
@@ -63,7 +74,7 @@ class DHTBucketRoutingTable(DHTRoutingTable):
             left_node = self.__create_node__(node._min, node._min + half)
             right_node = self.__create_node__(node._min + half + 1, node._max)
             
-            for s in node._bucket:
+            for s in node._bucket._nodes:
                 
                 distance_map[distance(self._id, s)] = s
                 
@@ -72,7 +83,7 @@ class DHTBucketRoutingTable(DHTRoutingTable):
                 elif left_node.is_node_id_within_bucket(s):
                     left_node.add_node(s)
             
-            if len(left_node._bucket) > 0 and len(right_node._bucket) > 0 and node.is_node_id_within_bucket(self._id):
+            if len(left_node._bucket._nodes) > 0 and len(right_node._bucket._nodes) > 0 and node.is_node_id_within_bucket(self._id):
                 node._bucket = None
                 node._left = left_node
                 node._right = right_node
@@ -81,11 +92,11 @@ class DHTBucketRoutingTable(DHTRoutingTable):
                 self.__split_bucket__(right_node)
 
             # only keep the closest nodes
-            elif len(node._bucket) > DHTBucketNode.MAX_BUCKET_SIZE:
+            elif len(node._bucket._nodes) > MAX_BUCKET_SIZE:
                 l = sorted(distance_map)
                 
-                for i in range(0, len(node._bucket) - DHTBucketNode.MAX_BUCKET_SIZE):
-                    del node._bucket[distance_map[l[i]]]
+                for i in range(0, len(node._bucket._nodes) - MAX_BUCKET_SIZE):
+                    del node._bucket._nodes[distance_map[l[i]]]
                     
     def find_closest_node(self, node_id):
         # If we have no known nodes, exception!
