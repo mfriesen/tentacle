@@ -125,7 +125,6 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         node_start_id = 50
         
         rt = DHTBucketRoutingTable(id_)
-        root = rt._root
          
         # when
         # fill left side
@@ -143,6 +142,7 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         rt.add_node(pow(2, 159) + 2)
         
         # then
+        root = rt._root
         self.assertIsNone(root._bucket)
         self.assertIsNotNone(root._left)
         self.assertIsNotNone(root._right)
@@ -175,6 +175,29 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         # then        
         self.assertEqual(MAX_BUCKET_SIZE, len(bucket._nodes))
         self.assertEqual({12: 12, 13: 13, 14: 14, 15: 15, 16: 16, 17: 17, 18: 18, 19: 19}, bucket._nodes)
+
+    def test_find_closest_nodes_01(self):
+        
+        # given
+        id_ = pow(2, 159)
+        node_start_id = 50
+        
+        rt = DHTBucketRoutingTable(id_)
+        
+        # fill left side
+        for node_id in range(node_start_id, node_start_id + MAX_BUCKET_SIZE + 1):
+            rt.add_node(node_id)
+
+        # fill right side
+        for node_id in range(pow(2, 160) - MAX_BUCKET_SIZE - 1, id_ - 1):
+            rt.add_node(node_id)        
+                
+        # when
+        results = rt.find_closest_nodes()
+        
+        # then                
+        self.assertTrue(results.is_bucket_full())
+        self.assertEqual({51: 51, 52: 52, 53: 53, 54: 54, 55: 55, 56: 56, 57: 57, 58: 58}, results._nodes)
         
 if __name__ == '__main__':
     unittest.main()

@@ -106,7 +106,21 @@ class DHTBucketRoutingTable(DHTRoutingTable):
             else: # only keep the closest nodes
                 node._bucket.truncate(self._id)
                     
-    def find_closest_node(self, node_id):
-        # If we have no known nodes, exception!
-        if len(self._nodes) == 0:
-            raise RuntimeError, "No nodes in routing table!"
+    def find_closest_nodes(self):        
+        bucket = DHTBucket()
+        self.__find_closest_nodes__(self._root, bucket)
+        return bucket
+            
+    def __find_closest_nodes__(self, node, bucket):
+        
+        if node is not None and node.is_node_id_within_bucket(self._id):
+            self.__find_closest_nodes__(node._left, bucket)
+            self.__find_closest_nodes__(node._right, bucket)
+            
+            if not bucket.is_bucket_full():
+                for s in node._bucket._nodes:
+                    bucket.add_node(s)
+                
+                bucket.truncate(self._id)
+                
+                

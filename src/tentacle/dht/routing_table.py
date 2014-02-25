@@ -34,5 +34,5 @@ class DHTRoutingTable(object):
     def add_node(self, node_id):
         raise NotImplemented
         
-    def find_closest_node(self, node_id):
+    def find_closest_nodes(self, node_id):
         raise NotImplemented
