@@ -99,8 +99,8 @@ class DHT(object):
         request = DHTRequest(self._default_host, self._default_port, bencode(q))
         response = self.send_request(request)
         
-        v = response.response_dic()['nodes']
-        self.decode_nodes(v)
+        #v = response.response_dic()['nodes']
+        #self.decode_nodes(v)
         return response
     
     """
