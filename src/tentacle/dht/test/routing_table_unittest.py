@@ -1,5 +1,4 @@
 import unittest
-import hashlib
 
 from tentacle.dht.routing_table import distance, to_binary, sha1_id
 
