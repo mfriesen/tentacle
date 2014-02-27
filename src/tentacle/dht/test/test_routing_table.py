@@ -1,6 +1,7 @@
 import unittest
+import base64
 
-from tentacle.dht.routing_table import distance, to_binary, sha1_id
+from tentacle.dht.routing_table import distance, to_binary, sha1_id, byte_to_int
 
 class TestRoutingTable(unittest.TestCase):
     
@@ -91,7 +92,17 @@ class TestRoutingTable(unittest.TestCase):
         result = sha1_id(s)
         
         # then
-        self.assertEquals(206627792091191212784374861007573277743147468436L, result
-                          )
+        self.assertEquals(206627792091191212784374861007573277743147468436L, result)
+
+    def test_byte_to_int_01(self):
+        # given
+        bytes_ = base64.b64decode("s6s1sj0aMsjo0fAFMAYObQwHAZU=")
+        
+        # when
+        result = byte_to_int(bytes_)
+        
+        # then
+        self.assertEqual(1025727453009050644114422909938179475956677673365, result)
+        
 if __name__ == '__main__':
     unittest.main()

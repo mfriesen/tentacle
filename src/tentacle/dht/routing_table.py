@@ -1,5 +1,9 @@
 import hashlib
 
+def byte_to_int(bytes_):
+    hex_ = ''.join( [ "%02X" % ord(b) for b in bytes_ ] )
+    return int(hex_, 16)
+
 def sha1_id(string):
     return int(hashlib.sha1(string).hexdigest(), 16)
 
@@ -11,14 +15,7 @@ def to_binary(s):
     return "{00:b}".format(s).zfill(len(str(s)) * 4)
 
 def distance(s1, s2):
-    #s1 = str(s1)
-    #s2 = str(s2)
-    
-    #print type(s1) , " " ,type(s2)
-    #if len(s1) != len(s2):
-    #   raise Exception("distance cannot be calculated length " , len(s1) , " != ", len(s2))
-    
-    #return int(''.join(str(ord(a) ^ ord(b)) for a,b in zip(s1,s2)))
+    print s1 , " " , s2
     return int(s1) ^ int(s2)    
 
 

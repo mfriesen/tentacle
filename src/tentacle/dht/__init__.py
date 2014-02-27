@@ -9,7 +9,7 @@ import struct
 
 from bencode import bencode, bdecode
 from tentacle.dht.dht_bucket_routing_table import DHTBucketRoutingTable
-from tentacle.dht.routing_table import DHTRoutingTable
+from tentacle.dht.routing_table import DHTRoutingTable, byte_to_int
 
 # See http://docs.python.org/library/logging.html
 logger = logging.getLogger(__name__)
@@ -41,9 +41,9 @@ class DHTResponse(dict):
     def is_error(self):
         return self['y'] == 'e'
     
-    def response_dic(self):
+    def data(self):
         return self['r']
-        
+
 class DHT(object):
     
     def __init__(self, id_, routing_table  = None, default_host="router.bittorrent.com", default_port=6881):
@@ -84,12 +84,10 @@ class DHT(object):
     def decode_nodes(self, nodes):
         nrnodes = len(nodes) / 26        
         nodes = struct.unpack("!" + "20sIH" * nrnodes, nodes)
-        for i in xrange(nrnodes):
-            id_, ip, port = nodes[i * 3], self.numToDottedQuad(nodes[i * 3 + 1]), nodes[i * 3 + 2]
+        
+        for i in xrange(nrnodes):            
+            id_, ip, port = byte_to_int(nodes[i * 3]), self.numToDottedQuad(nodes[i * 3 + 1]), nodes[i * 3 + 2]
             self._routing_table.add_node(id_)
-            print "id_ " , base64.b64encode(id_) , "IP " , ip , " PORT ", port
-            #self.strxor(self._id, id_)
-            #print self.node_distance(self._id, id_)
 
     """
     sends find_node request to network
@@ -99,16 +97,12 @@ class DHT(object):
         request = DHTRequest(self._default_host, self._default_port, bencode(q))
         response = self.send_request(request)
         
-        #v = response.response_dic()['nodes']
-        #self.decode_nodes(v)
+        if response.is_response():
+            v = response.data()['nodes']
+            self.decode_nodes(v)
+            
         return response
-    
-    """
-    calculates the distance between 2 nodes
-    """
-    def node_distance(self, id1, id2):
-        return int(hashlib.sha1(id1).hexdigest(), 16) ^ int(hashlib.sha1(id2).hexdigest(), 16)
-        
+            
     def send_request(self, request):
         
         socket = self.__create_socket__()
