@@ -23,12 +23,12 @@ class DHTNode(object):
     
     def __init__(self, id_, host, port):
         self._id = id_
-        self.host = host
-        self.port = port    
+        self._host = host
+        self._port = port    
 
 class DHTRoutingTable(object):
     
-    def add_node(self, node_id):
+    def add_node(self, dhtNode):
         raise NotImplemented
         
     def find_closest_nodes(self, node_id):

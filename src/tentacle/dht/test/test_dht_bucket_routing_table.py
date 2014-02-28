@@ -1,6 +1,6 @@
 import unittest
 
-from tentacle.dht.routing_table import sha1_id
+from tentacle.dht.routing_table import sha1_id, DHTNode
 from tentacle.dht.dht_bucket_routing_table import DHTBucketRoutingTable, MAX_BUCKET_SIZE,\
     DHTBucket
 
@@ -30,7 +30,7 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         self.assertEqual(0, len(rt._root._bucket._nodes))
  
         # when
-        rt.add_node(node_id)
+        rt.add_node(DHTNode(node_id, "", ""))
         
         # then
         self.assertEqual(1, len(rt._root._bucket._nodes))
@@ -45,8 +45,8 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         self.assertEqual(0, len(rt._root._bucket._nodes))
  
         # when
-        rt.add_node(node_id)
-        rt.add_node(node_id)
+        rt.add_node(DHTNode(node_id, "", ""))
+        rt.add_node(DHTNode(node_id, "", ""))
         
         # then
         self.assertEqual(1, len(rt._root._bucket._nodes))
@@ -61,12 +61,12 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         
         for i in range(1, MAX_BUCKET_SIZE):
             node_id = str(int(node_start_id) + i)
-            rt.add_node(sha1_id(node_id))
+            rt.add_node(DHTNode(sha1_id(node_id), "", ""))
         
         self.assertEqual(MAX_BUCKET_SIZE - 1, len(rt._root._bucket._nodes))
  
         # when
-        rt.add_node(node_start_id)
+        rt.add_node(DHTNode(node_start_id, "", ""))
         
         # then
         # level 0
@@ -91,7 +91,7 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
 
         # when
         for node_id in range(node_start_id, node_start_id + MAX_BUCKET_SIZE + 1):
-            rt.add_node(node_id)
+            rt.add_node(DHTNode(node_id, "", ""))
 
         # then
         node0 = rt._root
@@ -109,12 +109,12 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
          
         # when
         for node_id in range(node_start_id, node_start_id + MAX_BUCKET_SIZE + 1):
-            rt.add_node(node_id)
+            rt.add_node(DHTNode(node_id, "", ""))
 
         # then
         node0 = rt._root
         self.assertEqual(MAX_BUCKET_SIZE, len(node0._bucket._nodes))
-        self.assertEqual({51: 51, 52: 52, 53: 53, 54: 54, 55: 55, 56: 56, 57: 57, 58: 58}, node0._bucket._nodes)
+        self.assertEqual([51, 52, 53, 54, 55, 56, 57, 58], sorted(node0._bucket._nodes.keys()))
         self.assertIsNone(node0._left)
         self.assertIsNone(node0._right)
                
@@ -129,17 +129,17 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         # when
         # fill left side
         for node_id in range(node_start_id, node_start_id + MAX_BUCKET_SIZE + 1):
-            rt.add_node(node_id)
+            rt.add_node(DHTNode(node_id, "", ""))
 
         # fill right side
         for node_id in range(id_ - MAX_BUCKET_SIZE - 1, id_ - 1):
-            rt.add_node(node_id)
+            rt.add_node(DHTNode(node_id, "", ""))
             
         # add MAX to left side
-        rt.add_node(pow(2, 159))
+        rt.add_node(DHTNode(pow(2, 159), "", ""))
         
         # add MIN to right side //// fix test
-        rt.add_node(pow(2, 159) + 2)
+        rt.add_node(DHTNode(pow(2, 159) + 2, "", ""))
         
         # then
         root = rt._root
@@ -150,21 +150,23 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         self.assertEqual(MAX_BUCKET_SIZE, len(root._left._bucket._nodes))
         self.assertIsNone(root._left._left)
         self.assertIsNone(root._left._right)
-        self.assertEqual({52: 52, 53: 53, 54: 54, 55: 55, 56: 56, 57: 57, 58: 58, 730750818665451459101842416358141509827966271488L: 730750818665451459101842416358141509827966271488L}, root._left._bucket._nodes)
+
+        self.assertEqual([52, 53, 54, 55, 56, 57, 58, 730750818665451459101842416358141509827966271488L], sorted(root._left._bucket._nodes.keys()))
 
         self.assertIsNone(root._right._bucket)
         self.assertEqual(1, len(root._right._left._bucket._nodes))
-        self.assertEqual({730750818665451459101842416358141509827966271490L: 730750818665451459101842416358141509827966271490L}, root._right._left._bucket._nodes)
+        
+        self.assertEqual([730750818665451459101842416358141509827966271490L], root._right._left._bucket._nodes.keys())
         
         self.assertEqual(8, len(root._right._right._bucket._nodes))
-        self.assertEqual({1461501637330902918203684832716283019655932542967L: 1461501637330902918203684832716283019655932542967L, 1461501637330902918203684832716283019655932542968L: 1461501637330902918203684832716283019655932542968L, 1461501637330902918203684832716283019655932542969L: 1461501637330902918203684832716283019655932542969L, 1461501637330902918203684832716283019655932542970L: 1461501637330902918203684832716283019655932542970L, 1461501637330902918203684832716283019655932542971L: 1461501637330902918203684832716283019655932542971L, 1461501637330902918203684832716283019655932542972L: 1461501637330902918203684832716283019655932542972L, 1461501637330902918203684832716283019655932542973L: 1461501637330902918203684832716283019655932542973L, 1461501637330902918203684832716283019655932542974L: 1461501637330902918203684832716283019655932542974L}, root._right._right._bucket._nodes)
+        self.assertEqual([1461501637330902918203684832716283019655932542967L, 1461501637330902918203684832716283019655932542968L, 1461501637330902918203684832716283019655932542969L, 1461501637330902918203684832716283019655932542970L, 1461501637330902918203684832716283019655932542971L, 1461501637330902918203684832716283019655932542972L, 1461501637330902918203684832716283019655932542973L, 1461501637330902918203684832716283019655932542974L], sorted(root._right._right._bucket._nodes.keys()))
 
     def test_truncate_01(self):
         # given
         bucket = DHTBucket()
         
         for node_id in range(10, 10 + MAX_BUCKET_SIZE + 2):
-            bucket.add_node(node_id)        
+            bucket.add_node(DHTNode(node_id, "", ""))        
 
         self.assertTrue(bucket.is_bucket_full())
         self.assertEqual(MAX_BUCKET_SIZE + 2, len(bucket._nodes))
@@ -174,7 +176,7 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         
         # then        
         self.assertEqual(MAX_BUCKET_SIZE, len(bucket._nodes))
-        self.assertEqual({12: 12, 13: 13, 14: 14, 15: 15, 16: 16, 17: 17, 18: 18, 19: 19}, bucket._nodes)
+        self.assertEqual([12, 13, 14, 15, 16, 17, 18, 19], sorted(bucket._nodes.keys()))
 
     def test_find_closest_nodes_01(self):
         
@@ -186,18 +188,18 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
         
         # fill left side
         for node_id in range(node_start_id, node_start_id + MAX_BUCKET_SIZE + 1):
-            rt.add_node(node_id)
+            rt.add_node(DHTNode(node_id, "", ""))
 
         # fill right side
         for node_id in range(pow(2, 160) - MAX_BUCKET_SIZE - 1, id_ - 1):
-            rt.add_node(node_id)        
+            rt.add_node(DHTNode(node_id, "", ""))
                 
         # when
         results = rt.find_closest_nodes()
         
         # then                
         self.assertTrue(results.is_bucket_full())
-        self.assertEqual({51: 51, 52: 52, 53: 53, 54: 54, 55: 55, 56: 56, 57: 57, 58: 58}, results._nodes)
+        self.assertEqual([51, 52, 53, 54, 55, 56, 57, 58], sorted(results._nodes.keys()))
         
 if __name__ == '__main__':
     unittest.main()

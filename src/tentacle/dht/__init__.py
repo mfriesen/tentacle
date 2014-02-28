@@ -9,7 +9,7 @@ import struct
 
 from bencode import bencode, bdecode
 from tentacle.dht.dht_bucket_routing_table import DHTBucketRoutingTable
-from tentacle.dht.routing_table import DHTRoutingTable, byte_to_int
+from tentacle.dht.routing_table import DHTRoutingTable, DHTNode, byte_to_int
 
 # See http://docs.python.org/library/logging.html
 logger = logging.getLogger(__name__)
@@ -87,7 +87,7 @@ class DHT(object):
         
         for i in xrange(nrnodes):            
             id_, ip, port = byte_to_int(nodes[i * 3]), self.numToDottedQuad(nodes[i * 3 + 1]), nodes[i * 3 + 2]
-            self._routing_table.add_node(id_)
+            self._routing_table.add_node(DHTNode(id_, ip, port))
 
     """
     sends find_node request to network
