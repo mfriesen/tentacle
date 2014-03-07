@@ -15,8 +15,9 @@ class TestDht(unittest.TestCase):
     def test_ping_01(self):
         # given
         dht = DHT(id_=sha1_id("salt"))
+        data = base64.b64decode("ZDI6aXA2OjJH1ovP/TE6cmQyOmlkMjA6HbzsI8Zpc1H/Suwpzbqr8vvjRmdlMTp0MjphYTE6eTE6cmU=")
         dht.__create_socket__ = mock.Mock(return_value = None)
-        dht.__send_request__ = mock.Mock(return_value = DHTResponse("d1:rd2:id20:mnopqrstuvwxyz123456e1:t2:aa1:y1:re"))
+        dht.__send_request__ = mock.Mock(return_value = DHTResponse(data))
         
         # when
         result = dht.ping()
@@ -28,7 +29,7 @@ class TestDht(unittest.TestCase):
         self.assertFalse(result.is_error())
         
         dic = result.data()
-        self.assertEquals("mnopqrstuvwxyz123456", dic['id'])
+        self.assertEquals("1DBCEC23C6697351FF4AEC29CDBAABF2FBE34667", base64.b16encode(dic['id']))
     
     # response is real data
     def test_find_node_01(self):
