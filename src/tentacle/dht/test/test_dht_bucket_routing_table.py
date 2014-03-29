@@ -195,7 +195,7 @@ class TestDHTBucketRoutingTable(unittest.TestCase):
             rt.add_node(DHTNode(node_id, "", ""))
                 
         # when
-        results = rt.find_closest_nodes()
+        results = rt.find_closest_nodes(id_)
         
         # then                
         self.assertTrue(results.is_bucket_full())

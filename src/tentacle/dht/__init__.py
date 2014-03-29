@@ -46,22 +46,43 @@ class DHTResponse(dict):
 
 class DHT(object):
     
-    def __init__(self, id_, routing_table  = None, default_host="router.bittorrent.com", default_port=6881):
+    def __init__(self, id_, routing_table  = None):
         self._id = id_
-        self._default_host = default_host
-        self._default_port = default_port
         
         if routing_table is None:
             routing_table = DHTBucketRoutingTable(self._id)
             
-        self._routing_table = routing_table
+        self._routing_table = routing_table        
+    
+    def add_nodes_default(self):
+        
+        # localhost
+        host = socket.gethostbyname(socket.gethostname())
+        self.add_node(host, 1111, self._id) # TODO get proper IP
+
+        # router.bittorrent.com
+        self.add_node("67.215.242.138", 6881)
+    
+    """
+    add nodes to DHT
+    """
+    def add_node(self, host, port, id_ = None):
+        
+        if id_ is None:
+            response = self.ping(host, port)
+        
+            if response.is_response():
+                self._routing_table.add_node(DHTNode(response.data()['id'], host, port))
+        else:
+            self._routing_table.add_node(DHTNode(id_, host, port))
+
     
     """
     sends ping request for an Node
     """
-    def ping(self):
+    def ping(self, host, port):
         q = { "t" : "aa", "y":"q", "q" : "ping", "a":{"id":self._id}}
-        request = DHTRequest(self._default_host, self._default_port, bencode(q))
+        request = DHTRequest(host, port, bencode(q))
         response = self.send_request(request)
         return response
  
@@ -79,29 +100,45 @@ class DHT(object):
         return '.'.join(q)
 
     """
-    Decode node_info into a list of id, connect_info
+    Decodes data from "find_node" response and adds nodes to routing table
     """
-    def decode_nodes(self, nodes):
-        nrnodes = len(nodes) / 26        
-        nodes = struct.unpack("!" + "20sIH" * nrnodes, nodes)
+    def __add_nodes_from_find_node_response(self, response):
+        if response.is_response():
+            nodes = response.data()['nodes']
+                    
+            nrnodes = len(nodes) / 26        
+            nodes = struct.unpack("!" + "20sIH" * nrnodes, nodes)
         
-        for i in xrange(nrnodes):            
-            id_, ip, port = byte_to_int(nodes[i * 3]), self.numToDottedQuad(nodes[i * 3 + 1]), nodes[i * 3 + 2]
-            self._routing_table.add_node(DHTNode(id_, ip, port))
+            for i in xrange(nrnodes):            
+                id_, host, port = byte_to_int(nodes[i * 3]), self.numToDottedQuad(nodes[i * 3 + 1]), nodes[i * 3 + 2]
+                self.add_node(host, port, id_)
 
     """
     sends find_node request to network
     """
-    def find_node(self, node_id):
-        q = {"t":"aa", "y":"q", "q":"find_node", "a":{"id":self._id, "target":node_id}}
-        request = DHTRequest(self._default_host, self._default_port, bencode(q))
-        response = self.send_request(request)
+    def find_closest_nodes(self, node_id):
         
-        if response.is_response():
-            v = response.data()['nodes']
-            self.decode_nodes(v)
-            
-        return response
+        nodes = list()
+        bucket = self._routing_table.find_closest_nodes(node_id)
+        
+        # look for node_id in returned list
+        for s in bucket._nodes:
+            if s == node_id:
+                dhtNode = bucket._nodes[s]
+                nodes.append(dhtNode)
+                return nodes
+                
+        for s in bucket._nodes:
+            if s != node_id:
+                dhtNode = bucket._nodes[s]
+                q = {"t":"aa", "y":"q", "q":"find_node", "a":{"id":self._id, "target":s}}
+                request = DHTRequest(dhtNode._host, dhtNode._port, bencode(q))
+                response = self.send_request(request)
+        
+                self.__add_nodes_from_find_node_response(response)
+        
+        bucket = self._routing_table.find_closest_nodes(node_id)
+        return bucket.values()
             
     def send_request(self, request):
         

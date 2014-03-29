@@ -15,7 +15,6 @@ def to_binary(s):
     return "{00:b}".format(s).zfill(len(str(s)) * 4)
 
 def distance(s1, s2):
-    print s1 , " " , s2
     return int(s1) ^ int(s2)    
 
 

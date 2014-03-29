@@ -17,6 +17,9 @@ class DHTBucket(object):
     def is_empty(self):
         return len(self._nodes) == 0
     
+    def values(self):
+        return self._nodes.values()
+    
     def truncate(self, compare_node_id):
         if len(self._nodes) > MAX_BUCKET_SIZE:
             distance_map = dict()
@@ -107,22 +110,22 @@ class DHTBucketRoutingTable(DHTRoutingTable):
             else: # only keep the closest nodes
                 bucketNode._bucket.truncate(self._id)
                     
-    def find_closest_nodes(self):        
+    def find_closest_nodes(self, id_):        
         bucket = DHTBucket()
-        self.__find_closest_nodes__(self._root, bucket)
+        self.__find_closest_nodes__(self._root, bucket, id_)
         return bucket
             
-    def __find_closest_nodes__(self, bucketNode, bucket):
+    def __find_closest_nodes__(self, bucketNode, bucket, id_):
         
-        if bucketNode is not None and bucketNode.is_node_id_within_bucket(self._id):
-            self.__find_closest_nodes__(bucketNode._left, bucket)
-            self.__find_closest_nodes__(bucketNode._right, bucket)
+        if bucketNode is not None and bucketNode.is_node_id_within_bucket(id_):
+            self.__find_closest_nodes__(bucketNode._left, bucket, id_)
+            self.__find_closest_nodes__(bucketNode._right, bucket, id_)
             
-            if not bucket.is_bucket_full():
+            if bucketNode._bucket is not None and not bucket.is_bucket_full():
                 for node_id in bucketNode._bucket._nodes:
                     dhtNode = bucketNode._bucket._nodes[node_id]
                     bucket.add_node(dhtNode)
                 
-                bucket.truncate(self._id)
+                bucket.truncate(id_)
                 
                 
